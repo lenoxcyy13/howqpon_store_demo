@@ -1,0 +1,711 @@
+/**
+* Template Name: ZenBlog
+* File: variables.css
+* Description: Easily customize colors, typography, and other repetitive properties used in the template main stylesheet file main.css
+* 
+* Template URL: https://bootstrapmade.com/zenblog-bootstrap-blog-template/
+* Author: BootstrapMade.com
+* License: https://bootstrapmade.com/license/
+* 
+* Contents:
+* 1. ZenBlog template variables 
+* 2. Override default Bootstrap variables
+* 3. Set color and background class names
+*
+* Learn more about CSS variables at https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties
+*/
+
+/*--------------------------------------------------------------
+# 1. ZenBlog template variables 
+--------------------------------------------------------------*/
+:root {
+  /* Fonts */
+  /* --font-default: Roboto, "EB Garamond", system-ui, -apple-system, "Segoe UI",
+    "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; */
+  --font-default: Roboto;
+  --font-primary: Roboto, sans-serif; /*'Playfair Display', serif;*/
+  --font-secondary: Roboto, sans-serif;
+
+  /* Colors */
+  /* The *-rgb color names are simply the RGB converted value of the corresponding color for use in the rgba() function */
+
+  /* Default text color */
+  --color-default: #212529;
+  --color-default-rgb: 33, 37, 41;
+
+  /* Defult links color */
+  --color-links: #212529;
+  --color-links-hover: #15171a;
+
+  /* Primay colors */
+  --color-primary: #474747;
+  --color-primary-light: #ffffff;
+  --color-primary-dark: #0b0c0e;
+
+  --color-primary-rgb: 0, 0, 0;
+  --color-primary-light-rgb: 255, 255, 255;
+  --color-primary-dark-rgb: 11, 12, 14;
+
+  /* Secondary colors */
+  --color-secondary: #596d80;
+  --color-secondary-light: #8498aa;
+  --color-secondary-dark: #404f5c;
+
+  --color-secondary-rgb: 89, 109, 128;
+  --color-secondary-light-rgb: 132, 152, 170;
+  --color-secondary-dark-rgb: 64, 79, 92;
+
+  /* General colors */
+  --color-blue: #0d6efd;
+  --color-blue-rgb: 13, 110, 253;
+
+  --color-indigo: #6610f2;
+  --color-indigo-rgb: 102, 16, 242;
+
+  --color-purple: #6f42c1;
+  --color-purple-rgb: 111, 66, 193;
+
+  --color-pink: #f3268c;
+  --color-pink-rgb: 243, 38, 140;
+
+  --color-red: var(--red-500);
+  --color-red-rgb: var(--red-500-rgb);
+
+  --color-orange: var(--orange-500);
+  --color-orange-rgb: var(--orange-500-rgb);
+
+  --color-yellow: #ffc107;
+  --color-yellow-rgb: 255, 193, 7;
+
+  --color-green: var(--green-500);
+  --color-green-rgb: var(--green-500-rgb);
+
+  --color-teal: #20c997;
+  --color-teal-rgb: 32, 201, 151;
+
+  --color-cyan: #0dcaf0;
+  --color-cyan-rgb: 13, 202, 240;
+
+  --color-white: #ffffff;
+  --color-white-rgb: 255, 255, 255;
+
+  --color-gray: var(--grey-500);
+  --color-gray-rgb: var(--grey-500-rgb);
+
+  --color-black: var(--grey-900);
+  --color-black-rgb: var(--grey-900-rgb);
+}
+
+/*--------------------------------------------------------------
+# 2. Override default Bootstrap variables
+--------------------------------------------------------------*/
+:root {
+  --bs-blue: var(--color-blue);
+  --bs-indigo: var(--color-indigo);
+  --bs-purple: var(--color-purple);
+  --bs-pink: var(--color-pink);
+  --bs-red: var(--color-red);
+  --bs-orange: var(--color-orange);
+  --bs-yellow: var(--color-yellow);
+  --bs-green: var(--color-green);
+  --bs-teal: var(--color-teal);
+  --bs-cyan: var(--color-cyan);
+  --bs-white: var(--color-white);
+  --bs-gray: var(--color-gray);
+  --bs-gray-dark: #343a40;
+  --bs-gray-100: #e5e5e5;
+  --bs-gray-200: #d8d8d8;
+  --bs-gray-300: #c6c6c6;
+  --bs-gray-400: #bbbbbb;
+  --bs-gray-500: #aaaaaa;
+  --bs-gray-600: #9b9b9b;
+  --bs-gray-700: #797979;
+  --bs-gray-800: #5e5e5e;
+  --bs-gray-900: #474747;
+  --bs-primary: var(--color-blue);
+  --bs-secondary: var(--color-blue);
+  --bs-success: #198754;
+  --bs-info: #0dcaf0;
+  --bs-warning: #ffc107;
+  --bs-danger: #dc3545;
+  --bs-light: #f8f9fa;
+  --bs-dark: #212529;
+  --bs-primary-rgb: var(--color-primary-rgb);
+  --bs-secondary-rgb: var(--color-secondary-rgb);
+  --bs-success-rgb: 25, 135, 84;
+  --bs-info-rgb: 13, 202, 240;
+  --bs-warning-rgb: 255, 193, 7;
+  --bs-danger-rgb: 220, 53, 69;
+  --bs-light-rgb: 248, 249, 250;
+  --bs-dark-rgb: 33, 37, 41;
+  --bs-white-rgb: var(--color-white-rgb);
+  --bs-black-rgb: var(--color-black-rgb);
+  --bs-body-color-rgb: var(--color-default-rgb);
+  --bs-body-bg-rgb: 255, 255, 255;
+  --bs-font-sans-serif: var(--font-default);
+  --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  --bs-gradient: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.15),
+    rgba(255, 255, 255, 0)
+  );
+  --bs-body-font-family: var(--font-default);
+  --bs-body-font-size: 1rem;
+  --bs-body-font-weight: 400;
+  --bs-body-line-height: 1.5;
+  --bs-body-color: var(--color-default);
+  --bs-body-bg: #fff;
+}
+/* Colors */
+:root {
+  /* White */
+  --white: #ffffff;
+  --white-rgb: 255, 255, 255;
+  /* Green */
+  --green-50: #ebf8f4;
+  --green-50-rgb: 235, 248, 244;
+  --green-100: #c1eadc;
+  --green-100-rgb: 193, 234, 220;
+  --green-200: #a3dfcb;
+  --green-200-rgb: 163, 223, 203;
+  --green-500: #38ba8f;
+  --green-500-rgb: 56, 186, 143;
+  --green-600: #33a982;
+  --green-600-rgb: 51, 169, 130;
+  --green-700: #288466;
+  --green-700-rgb: 40, 132, 102;
+
+  /* Orange */
+  --orange-50: #fff0e6;
+  --orange-50-rgb: 255, 240, 230;
+  --orange-100: #ffd0b0;
+  --orange-100-rgb: 255, 208, 176;
+  --orange-200: #ffb98a;
+  --orange-200-rgb: 255, 185, 138;
+  --orange-500: #ff6600;
+  --orange-500-rgb: 255, 102, 0;
+  --orange-600: #e85d00;
+  --orange-600-rgb: 232, 93, 0;
+  --orange-700: #b54800;
+  --orange-700-rgb: 181, 72, 0;
+
+  /* Red */
+  --red-50: #fcebec;
+  --red-50-rgb: 252, 235, 236;
+  --red-100: #f4c0c5;
+  --red-100-rgb: 244, 192, 197;
+  --red-200: #efa2a9;
+  --red-200-rgb: 239, 162, 169;
+  --red-500: #dc3545;
+  --red-500-rgb: 220, 53, 69;
+  --red-600: #c8303f;
+  --red-600-rgb: 200, 48, 63;
+  --red-700: #9c2631;
+  --red-700-rgb: 156, 38, 49;
+
+  /* Grey */
+  --grey-50: #f7f7f7;
+  --grey-50-rgb: 247, 247, 247;
+  --grey-100: #e5e5e5;
+  --grey-100-rgb: 229, 229, 229;
+  --grey-200: #d8d8d8;
+  --grey-200-rgb: 216, 216, 216;
+  --grey-300: #c6c6c6;
+  --grey-300-rgb: 198, 198, 198;
+  --grey-400: #bbbbbb;
+  --grey-400-rgb: 187, 187, 187;
+  --grey-500: #aaaaaa;
+  --grey-500-rgb: 170, 170, 170;
+  --grey-600: #9b9b9b;
+  --grey-600-rgb: 155, 155, 155;
+  --grey-700: #797979;
+  --grey-700-rgb: 121, 121, 121;
+  --grey-800: #5e5e5e;
+  --grey-800-rgb: 94, 94, 94;
+  --grey-900: #474747;
+  --grey-900-rgb: 71, 71, 71;
+}
+/* Font Sizes */
+:root {
+  --h1: 32px;
+  --h2: 24px;
+  --h3: 20px;
+  --h4: 16px;
+  --h5: 14px;
+  --h6: 12px;
+}
+/* Gaps */
+:root {
+  --space-0_25: 2px;
+  --space-0_5: 4px;
+  --space-1: 8px;
+  --space-1_5: 12px;
+  --space-2: 16px;
+  --space-2_5: 20px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 40px;
+  --space-6: 48px;
+  --space-7: 56px;
+  --space-8: 64px;
+  --space-9: 72px;
+  --space-10: 80px;
+}
+
+/* Elevate: box-shadow */
+:root {
+  --elevate-4: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 0 12px 6px rgba(0, 0, 0, 0.1);
+}
+
+/*--------------------------------------------------------------
+# 3. Set color and background class names
+--------------------------------------------------------------*/
+/* Fonts */
+.font-default {
+  font-family: var(--font-default) !important;
+}
+.font-primary {
+  font-family: var(--font-primary) !important;
+}
+.font-secondary {
+  font-family: var(--font-secondary) !important;
+}
+
+/* Text Colors */
+.color-default {
+  color: var(--color-default) !important;
+}
+.color-links {
+  color: var(--color-links) !important;
+}
+.color-links:hover {
+  color: var(--color-links-hover) !important;
+}
+.color-primary {
+  color: var(--color-primary) !important;
+}
+.color-primary-light {
+  color: var(--color-primary-light) !important;
+}
+.color-primary-dark {
+  color: var(--color-primary-dark) !important;
+}
+.color-secondary {
+  color: var(--color-secondary) !important;
+}
+.color-secondary-light {
+  color: var(--color-secondary-light) !important;
+}
+.color-secondary-dark {
+  color: var(--color-secondary-dark) !important;
+}
+.color-blue {
+  color: var(--color-blue) !important;
+}
+.color-indigo {
+  color: var(--color-indigo) !important;
+}
+.color-purple {
+  color: var(--color-purple) !important;
+}
+.color-pink {
+  color: var(--color-pink) !important;
+}
+.color-red {
+  color: var(--color-red) !important;
+}
+.color-orange {
+  color: var(--color-orange) !important;
+}
+.color-yellow {
+  color: var(--color-yellow) !important;
+}
+.color-green {
+  color: var(--color-green) !important;
+}
+.color-teal {
+  color: var(--color-teal) !important;
+}
+.color-cyan {
+  color: var(--color-cyan) !important;
+}
+.color-white {
+  color: var(--color-white) !important;
+}
+.color-gray {
+  color: var(--color-gray) !important;
+}
+.color-black {
+  color: var(--color-black) !important;
+}
+
+/* Background Colors */
+.bg-default {
+  background-color: var(--color-default) !important;
+}
+.bg-primary {
+  background-color: var(--color-primary) !important;
+}
+.bg-primary-light {
+  background-color: var(--color-primary-light) !important;
+}
+.bg-primary-dark {
+  background-color: var(--color-primary-dark) !important;
+}
+.bg-secondary {
+  background-color: var(--color-secondary) !important;
+}
+.bg-secondary-light {
+  background-color: var(--color-secondary-light) !important;
+}
+.bg-secondary-dark {
+  background-color: var(--color-secondary-dark) !important;
+}
+.bg-blue {
+  background-color: var(--color-blue) !important;
+}
+.bg-indigo {
+  background-color: var(--color-indigo) !important;
+}
+.bg-purple {
+  background-color: var(--color-purple) !important;
+}
+.bg-pink {
+  background-color: var(--color-pink) !important;
+}
+.bg-red {
+  background-color: var(--color-red) !important;
+}
+.bg-orange {
+  background-color: var(--color-orange) !important;
+}
+.bg-yellow {
+  background-color: var(--color-yellow) !important;
+}
+.bg-green {
+  background-color: var(--color-green) !important;
+}
+.bg-teal {
+  background-color: var(--color-teal) !important;
+}
+.bg-cyan {
+  background-color: var(--color-cyan) !important;
+}
+.bg-white {
+  background-color: var(--color-white) !important;
+}
+.bg-gray {
+  background-color: var(--color-gray) !important;
+}
+.bg-black {
+  background-color: var(--color-black) !important;
+}
+
+.btn, .btn-primary {
+  --bs-btn-color: var(--white);
+  --bs-btn-bg: var(--green-500);
+  --bs-btn-border-color: var(--green-500);
+
+  --bs-btn-hover-color: var(--white);
+  --bs-btn-hover-bg: var(--green-600);
+  --bs-btn-hover-border-color: var(--green-600);
+
+  --bs-btn-active-color: var(--white);
+  --bs-btn-active-bg: var(--green-700);
+  --bs-btn-active-border-color: var(--green-700);
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(var(--grey-900-rgb), 0.125);
+
+  --bs-btn-focus-color: var(--white);
+  --bs-btn-focus-bg: var(--green-500);
+  --bs-btn-focus-border-color: var(--green-200);
+  --bs-btn-focus-shadow-rgb: var(--grey-900-rgb);
+
+  --bs-btn-disabled-color: var(--white);
+  --bs-btn-disabled-bg: var(--green-200);
+  --bs-btn-disabled-border-color: var(--green-200);
+}
+.btn.btn-light, .btn-primary.btn-light {
+  --bs-btn-color: var(--green-500);
+  --bs-btn-bg: var(--white);
+  --bs-btn-border-color: var(--green-500);
+
+  --bs-btn-hover-color: var(--green-500);
+  --bs-btn-hover-bg: var(--green-50);
+  --bs-btn-hover-border-color: var(--green-500);
+
+  --bs-btn-active-color: var(--green-500);
+  --bs-btn-active-bg: var(--green-100);
+  --bs-btn-active-border-color: var(--green-500);
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(var(--grey-900-rgb), 0.125);
+
+  --bs-btn-focus-color: var(--white);
+  --bs-btn-focus-bg: var(--green-500);
+  --bs-btn-focus-border-color: var(--green-500);
+  --bs-btn-focus-shadow-rgb: var(--grey-900-rgb);
+  
+  --bs-btn-disabled-color: var(--green-200);
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: var(--green-200);
+}
+.btn.btn-minimal, .btn-primary.btn-minimal {
+  --bs-btn-color: var(--green-500);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: transparent;
+
+  --bs-btn-hover-color: var(--green-500);
+  --bs-btn-hover-bg: var(--green-50);
+  --bs-btn-hover-border-color: var(--green-50);
+
+  --bs-btn-active-color: var(--green-500);
+  --bs-btn-active-bg: var(--green-100);
+  --bs-btn-active-border-color: var(--green-100);
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(var(--grey-900-rgb), 0.125);
+
+  --bs-btn-focus-color: var(--white);
+  --bs-btn-focus-bg: var(--green-500);
+  --bs-btn-focus-border-color: var(--green-200);
+  --bs-btn-focus-shadow-rgb: var(--grey-900-rgb);
+
+  --bs-btn-disabled-color: var(--green-200);
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: transparent;
+}
+.btn.btn-subtle, .btn-primary.btn-subtle {
+  --bs-btn-color: var(--green-500);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--green-500);
+
+  --bs-btn-hover-color: var(--green-500);
+  --bs-btn-hover-bg: var(--green-100);
+  --bs-btn-hover-border-color: var(--green-200);
+
+  --bs-btn-active-color: var(--green-500);
+  --bs-btn-active-bg: var(--green-100);
+  --bs-btn-active-border-color: var(--green-100);
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(var(--grey-900-rgb), 0.125);
+
+  --bs-btn-focus-color: var(--white);
+  --bs-btn-focus-bg: var(--green-500);
+  --bs-btn-focus-border-color: var(--green-200);
+  --bs-btn-focus-shadow-rgb: var(--grey-900-rgb);
+
+  --bs-btn-disabled-color: var(--green-200);
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: transparent;
+}
+
+.btn-secondary {
+  --bs-btn-color: var(--grey-900);
+  --bs-btn-bg: var(--grey-50);
+  --bs-btn-border-color: var(--grey-50);
+
+  --bs-btn-hover-color: var(--grey-900);
+  --bs-btn-hover-bg: var(--grey-100);
+  --bs-btn-hover-border-color: var(--grey-100);
+  
+  --bs-btn-active-color: var(--grey-900);
+  --bs-btn-active-bg: var(--grey-200);
+  --bs-btn-active-border-color: var(--grey-200);
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(var(--grey-900-rgb), 0.125);
+  
+  --bs-btn-focus-color: var(--grey-900);
+  --bs-btn-focus-bg: var(--grey-50);
+  --bs-btn-focus-border-color: var(--green-200);
+  --bs-btn-focus-shadow-rgb: var(--grey-900-rgb);
+  
+  --bs-btn-disabled-color: var(--grey-300);
+  --bs-btn-disabled-bg: var(--grey-100);
+  --bs-btn-disabled-border-color: var(--grey-100);
+}
+.btn-secondary.btn-light {
+  --bs-btn-color: var(--grey-900);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--grey-400);
+
+  --bs-btn-hover-color: var(--grey-900);
+  --bs-btn-hover-bg: var(--grey-50);
+  --bs-btn-hover-border-color: var(--grey-400);
+  
+  --bs-btn-active-color: var(--grey-900);
+  --bs-btn-active-bg: var(--grey-100);
+  --bs-btn-active-border-color: var(--grey-400);
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(var(--grey-900-rgb), 0.125);
+  
+  --bs-btn-focus-color: var(--grey-900);
+  --bs-btn-focus-bg: var(--grey-50);
+  --bs-btn-focus-border-color: var(--green-200);
+  --bs-btn-focus-shadow-rgb: var(--grey-900-rgb);
+  
+  --bs-btn-disabled-color: var(--grey-300);
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: var(--grey-100);
+}
+.btn-secondary.btn-minimal {
+  --bs-btn-color: var(--grey-900);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: transparent;
+  
+  --bs-btn-hover-color: var(--grey-900);
+  --bs-btn-hover-bg: var(--grey-50);
+  --bs-btn-hover-border-color: var(--grey-50);
+  
+  --bs-btn-active-color: var(--grey-900);
+  --bs-btn-active-bg: var(--grey-100);
+  --bs-btn-active-border-color: var(--grey-100);
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(var(--grey-900-rgb), 0.125);
+  
+  --bs-btn-focus-color: var(--grey-900);
+  --bs-btn-focus-bg: var(--grey-50);
+  --bs-btn-focus-border-color: var(--green-200);
+  --bs-btn-focus-shadow-rgb: var(--grey-900-rgb);
+  
+  --bs-btn-disabled-color: var(--grey-300);
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: transparent;
+}
+
+.btn-destructive {
+  --bs-btn-color: var(--white);
+  --bs-btn-bg: var(--orange-500);
+  --bs-btn-border-color: var(--orange-500);
+
+  --bs-btn-hover-color: var(--white);
+  --bs-btn-hover-bg: var(--orange-600);
+  --bs-btn-hover-border-color: var(--orange-600);
+  
+  --bs-btn-active-color: var(--white);
+  --bs-btn-active-bg: var(--orange-700);
+  --bs-btn-active-border-color: var(--orange-700);
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(var(--grey-900-rgb), 0.125);
+  
+  --bs-btn-focus-color: var(--white);
+  --bs-btn-focus-bg: var(--orange-500);
+  --bs-btn-focus-border-color: var(--green-200);
+  --bs-btn-focus-shadow-rgb: var(--grey-900-rgb);
+  
+  --bs-btn-disabled-color: var(--white);
+  --bs-btn-disabled-bg: var(--orange-200);
+  --bs-btn-disabled-border-color: var(--orange-200);
+}
+.btn-destructive.btn-light {
+  --bs-btn-color: var(--orange-500);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--orange-500);
+
+  --bs-btn-hover-color: var(--orange-500);
+  --bs-btn-hover-bg: var(--orange-50);
+  --bs-btn-hover-border-color: var(--orange-500);
+  
+  --bs-btn-active-color: var(--orange-500);
+  --bs-btn-active-bg: var(--orange-100);
+  --bs-btn-active-border-color: var(--orange-500);
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(var(--grey-900-rgb), 0.125);
+  
+  --bs-btn-focus-color: var(--white);
+  --bs-btn-focus-bg: var(--orange-500);
+  --bs-btn-focus-border-color: var(--green-200);
+  --bs-btn-focus-shadow-rgb: var(--grey-900-rgb);
+  
+  --bs-btn-disabled-color: var(--orange-200);
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: var(--orange-200);
+}
+.btn-destructive.btn-minimal {
+  --bs-btn-color: var(--orange-500);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: transparent;
+
+  --bs-btn-hover-color: var(--orange-500);
+  --bs-btn-hover-bg: var(--orange-50);
+  --bs-btn-hover-border-color: var(--orange-50);
+  
+  --bs-btn-active-color: var(--orange-500);
+  --bs-btn-active-bg: var(--orange-100);
+  --bs-btn-active-border-color: var(--orange-100);
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(var(--grey-900-rgb), 0.125);
+  
+  --bs-btn-focus-color: var(--white);
+  --bs-btn-focus-bg: var(--orange-500);
+  --bs-btn-focus-border-color: var(--green-200);
+  --bs-btn-focus-shadow-rgb: var(--grey-900-rgb);
+  
+  --bs-btn-disabled-color: var(--orange-200);
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: transparent;
+}
+
+.btn-sm {
+  --bs-btn-font-size: var(--h6);
+  --btn-padding-y: 4px;
+}
+.btn-md {
+  --bs-btn-font-size: var(--h5);
+  --btn-padding-y: 8px;
+}
+.btn-lg {
+  --bs-btn-font-size: var(--h4);
+  --btn-padding-y: 12px;
+}
+
+.text-sm {
+  font-size: var(--h6);
+}
+
+.btn-failed{
+  --bs-btn-color: var(--red-500);
+  --bs-btn-bg: var(--white);
+  --bs-btn-border-color: var(--red-500);
+  
+  --bs-btn-hover-color: var(--red-500);
+  --bs-btn-hover-bg: var(--red-50);
+  --bs-btn-hover-border-color: var(--red-700);
+
+  --bs-btn-active-color:  var(--red-500);
+  --bs-btn-active-bg: var(--red-50);
+  --bs-btn-active-border-color: var(--red-700);
+
+  --bs-btn-focus-color:  var(--white);
+  --bs-btn-focus-bg: var(--red-700);
+  --bs-btn-focus-border-color:  var(--red-50);
+  --bs-btn-focus-shadow-rgb: var(--grey-900-rgb);
+}
+
+.btn-failed.btn-bold{
+  --bs-btn-color: var(--white);
+  --bs-btn-bg: var(--red-500);
+  --bs-btn-border-color: var(--red-500);
+  
+  --bs-btn-hover-color: var(--white);
+  --bs-btn-hover-bg: var(--red-600);
+  --bs-btn-hover-border-color: var(--red-600);
+
+  --bs-btn-active-color:  var(--white);
+  --bs-btn-active-bg: var(--red-700);
+  --bs-btn-active-border-color: var(--red-700);
+
+  --bs-btn-focus-color:  var(--white);
+  --bs-btn-focus-bg: var(--red-500);
+  --bs-btn-focus-border-color:  var(--green-200);
+  --bs-btn-focus-shadow-rgb: var(--grey-900-rgb);
+}
+
+.btn-submit{
+  --bs-btn-color: var(--grey-900);
+  --bs-btn-bg: var(--white);
+  --bs-btn-border-color: var(--grey-900);
+
+  --bs-btn-hover-color: var(--grey-900);
+  --bs-btn-hover-bg: var(--grey-100);
+  --bs-btn-hover-border-color: var(--grey-900);
+
+  --bs-btn-active-color: var(--grey-900);
+  --bs-btn-active-bg:var(--grey-100);
+  --bs-btn-active-border-color:  var(--grey-900);
+
+  --bs-btn-focus-color:  var(--white);
+  --bs-btn-focus-bg: var(--grey-900);
+  --bs-btn-focus-border-color:  var(--grey-900);
+  --bs-btn-focus-shadow-rgb: var(--grey-900-rgb);
+}

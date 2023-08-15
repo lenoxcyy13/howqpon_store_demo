@@ -1,0 +1,93 @@
+/* @font-face {
+    font-family: tc;
+    src: url('/fonts/NotoSansTC-Regular.otf');
+} */
+
+html {
+    height:100%;
+    font-family: tc, PingFang SC, Microsoft JhengHei, sans-serif, monospace, Arial, serif;
+}
+
+body {height:100%;margin:0;padding:0}
+
+#divHeader { 
+    width: 100%;
+    margin: 0;
+    padding: 5px 10px;
+    border:none;
+    background-color:#FFFFFF;
+    box-shadow:0px 0px 9px #80808080;
+}
+
+#divLoading { 
+    margin: 10px;
+}
+
+#divMain{
+    margin: 10px;
+    width: 100%;
+    height: 100%;
+}
+
+#divTitle{
+    margin: 10px;
+}
+
+#content { 
+    margin: 10px;
+}
+
+table, th, td {
+    border: 1px solid #D3D3D3;
+    border-collapse: collapse;
+}
+
+td {
+    vertical-align:top;
+    padding: 3px;
+}
+
+.divTextArea{
+    display:inline-block;
+    position:relative;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-shadow: 1px 1px 1px #999;
+}
+
+.divTextArea textarea{
+    padding: 10px;
+    max-width: 100%;
+    line-height: 1.5;
+    border-radius: 5px;
+    border: 0px;
+}
+
+.divTextArea div{
+    width: 100%;
+    height: 38px;
+    padding-bottom: 10px;
+    border-top: 1px solid #ccc;
+}
+
+.divTextArea button{
+    position:absolute;
+    bottom: 10px;
+    right: 10px;
+
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
+    box-shadow: 1px 1px 1px #999;
+}
+
+.divTextArea font{
+    position:absolute;
+    bottom: 10px;
+    left: 10px;
+}
