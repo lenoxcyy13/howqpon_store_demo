@@ -18,8 +18,11 @@ use App\Http\Controllers\MemberControllerV2;
 |
 */
 
-Route::get('', function () {
-    return view('login');
+Route::get('/profile.html', function (Request $request) {
+    $userId = $request->session()->get('userId');
+    $user = (new UserController())->getUserProfileByUserId($userId);
+    dd($user);
+    return view('profile', ['userId' => $userId]);
 });
 
 Route::get('/logout', function(Request $request) {
@@ -28,6 +31,10 @@ Route::get('/logout', function(Request $request) {
 });
 
 Route::get('/login.html', function () {
+    return view('login');
+});
+
+Route::get('', function () {
     return view('login');
 });
 
@@ -59,17 +66,13 @@ Route::get('/store.html', function (Request $request) {
     }
     
     if ($data != null) {
-        // $data = [
-        //     "userId" => $userId,
-        //     "premission" => $premission,
-        // ];
-
         $data = base64_encode(json_encode($data));
         $data = base64_encode($data);
         return view('welcome',  ["data" => $data]);
     }
     else {
-        return view('roleAssign', ["userId" => $userId]);
+        // return view('roleAssign', ["userId" => $userId]);
+        return redirect('login.html');
     }
     
 });

@@ -17,7 +17,11 @@
 
     <title>本日訂單</title>
 
-    <style type>
+    <style>
+
+        html {
+            overflow-y: scroll;
+        }
 
         #divHeader {
             display: flex;
@@ -32,15 +36,44 @@
             font-size: 14px;
         }
 
+        table td {
+            border: 1px solid #D3D3D3;
+        }
+
         .td_update {
             text-align: center;
             border: 0;
         }
 
-        /* .btn {
-            border-style: groove;
-            padding: 5px;
-        } */
+        #divTotal {
+            display: flex;
+            justify-content: space-between;
+            height: 50px;
+        }
+
+        .tabNav {
+            width: 50%;
+            border-style: solid;
+            border-color: #efefef;
+        }
+
+        .tabNav:hover {     
+            border-bottom-color: var(--green-500);;    
+        }
+
+        .collapse-head {
+            font-weight: bold;
+        }
+
+        .active, .collapsible:hover {
+            background-color: #ccc;
+        }
+
+        .collapse-body {
+            padding: 0 18px;
+            display: none;
+            overflow: hidden;
+        }
 
     </style>
     
@@ -49,7 +82,8 @@
 <body>
 
     <div id="divHeader">
-        <a href="index.html"><img width="54" height="54" src="images/howqpon.ico" alt="howqpon"></a>
+        <button class="btn btn-block" type="submit" onclick="window.location.href='profile.html'">用戶</button>
+        <a href="store.html"><img width="54" height="54" src="images/howqpon.ico" alt="howqpon"></a>
         <button class="btn btn-block" type="submit" onclick="window.location.href='logout'">登出</button>
     </div>
 
@@ -62,7 +96,14 @@
                 <div id="divSort">
                     顯示服務費<input id="inputCbkShowFeeAmount" type="checkbox" oninput="showStore(storeId)" checked></input>
                 </div>
-                <div id="divContent"></div>
+                <div id="divTotal" class="navBar">
+                    <button id="btn_not" class="tabNav" onclick="openTab('divNotConfirm', 'confirm')">待確認</button>
+                    <button id="btn_confirm" class="tabNav" onclick="openTab('divConfirm', 'confirm')">已確認</button>
+                </div>
+                <div id="divContent">
+                    <div id="divNotConfirm" class="confirm"></div>
+                    <div id="divConfirm" class="confirm" style="display:none"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -74,8 +115,34 @@
 <script src="{{ asset('js/html2canvas.min.js') }}"></script>
 <script src="{{ asset('js/orderProvider.js') }}"></script>
 
+<script>var data = '<?php echo $data; ?>';</script>
+<script src="{{ asset('js/ordersToday.js') }}"></script>
+
 <script>
-var data = '<?php echo $data; ?>';
+    
+    function openTab(idName, className) {
+        var i;
+        var x = document.getElementsByClassName(className);
+        for (i = 0; i < x.length; i++) {
+            x[i].style.display = "none";
+        }
+        document.getElementById(idName).style.display = "block";
+    }
+
+    function openCollapse(idName, className) {
+        // var i;
+        // var x = document.getElementsByClassName(className);
+        // for (i = 0; i < x.length; i++) {
+        //     x[i].style.display = "none";
+        // }
+        let instance = document.getElementById(idName);
+        if (instance.style.display == "block") {
+            instance.style.display = "none";
+        }
+        else {
+            instance.style.display = "block";
+        }
+    }
+
 </script>
 
-<script src="{{ asset('js/ordersToday.js') }}"></script>

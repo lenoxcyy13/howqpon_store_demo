@@ -20,7 +20,7 @@
     <link href="css/home/main.css" rel="stylesheet">
     <link href="css/home/custom.css" rel="stylesheet">
     <link href="css/mystyle.css" rel="stylesheet">
-    <link href="css/bootstrap.css" rel="stylesheet">
+    <!-- <link href="css/bootstrap.css" rel="stylesheet"> -->
     <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
 
     <!-- SVGs -->
@@ -34,7 +34,7 @@
             display: flex;
             align-items: center;
             box-sizing: border-box;
-            justify-content: space-between;
+            justify-content: center;
         }
 
         .login_content {
@@ -53,12 +53,13 @@
 <body>
 
     <div id="divHeader">
-        <a href="index.html"><img width="54" height="54" src="images/howqpon.ico" alt="howqpon"></a>
-        <button class="btn btn-block" type="submit" onclick="window.location.href='logout'">登出</button>
+        <a href="profile.html"><img width="54" height="54" src="images/howqpon.ico" alt="howqpon"></a>
+        <!-- <button class="btn btn-block" type="submit" onclick="window.location.href='logout'">登出</button> -->
     </div>
 
     <div class="content">
         <div class="login_content">
+            <div style="height: 30px"></div>
             <h1>店家登入</h1>
             <a href="lineLogin?mode=1">
                 <button class="btn px-5 py-3 px-lg-5 btn-lg" style="background-color:#06C755 !important;">
