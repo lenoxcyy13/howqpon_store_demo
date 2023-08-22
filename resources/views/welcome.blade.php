@@ -36,6 +36,10 @@
             font-size: 14px;
         }
 
+        #divTitle {
+            text-align: center;
+        }
+
         table td {
             border: 1px solid #D3D3D3;
         }
@@ -71,10 +75,12 @@
 
         .collapse-body {
             padding: 0 18px;
-            display: none;
             overflow: hidden;
+            display: block;
+            text-align: center;
+            max-height: 0px;
+            transition: max-height 0.2s ease-out;
         }
-
     </style>
     
 </head>
@@ -89,12 +95,15 @@
 
     <div id='divLoading' style="display: none;">正在載入頁面資料...</div>
     <div id="divMain" style="display: none;">
-        訂單確認 日期：<input id="inputDate" type="date" onchange="refresh()"></input><br><br>
+        <div id="divTitle">
+            <h4 id="pStoreName"></h4>
+            日期：<input id="inputDate" type="date" onchange="refresh()">
+        </div>
         <div>
-            <div id="divStores" class="floatLeft"></div>
+            <div id="divStores" class="floatLeft" style="display: none"></div>
             <div class="floatLeft">
-                <div id="divSort">
-                    顯示服務費<input id="inputCbkShowFeeAmount" type="checkbox" oninput="showStore(storeId)" checked></input>
+                <div id="divSort" style="display: none">
+                    顯示服務費<input id="inputCbkShowFeeAmount" type="checkbox" oninput="showStore(storeId)" checked>
                 </div>
                 <div id="divTotal" class="navBar">
                     <button id="btn_not" class="tabNav" onclick="openTab('divNotConfirm', 'confirm')">待確認</button>
@@ -129,20 +138,31 @@
         document.getElementById(idName).style.display = "block";
     }
 
-    function openCollapse(idName, className) {
-        // var i;
-        // var x = document.getElementsByClassName(className);
-        // for (i = 0; i < x.length; i++) {
-        //     x[i].style.display = "none";
-        // }
-        let instance = document.getElementById(idName);
-        if (instance.style.display == "block") {
-            instance.style.display = "none";
-        }
+    function openColl(idName) {
+        var content = document.getElementById(idName);
+        if (content.style.maxHeight) {
+            content.style.maxHeight = null;
+        } 
         else {
-            instance.style.display = "block";
+            content.style.maxHeight = content.scrollHeight + "px";
         }
     }
+
+    function myCallback() {
+        const coll = document.getElementsByClassName("btn btn-secondary");      
+        if (coll.length) {
+            clearInterval(myInterval);
+            for (let i = 0; i < coll.length; i++) {
+                const tabl = document.getElementsByClassName("collapse-body isOpen");
+                for (let i = 0; i < tabl.length; i++) {
+                    tabl[i].style.maxHeight = tabl[i].scrollHeight + "px";
+                }
+            }
+        }
+    }
+
+    const myInterval = setInterval(myCallback, 100);
+
 
 </script>
 

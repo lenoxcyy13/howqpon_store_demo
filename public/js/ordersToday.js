@@ -9,6 +9,8 @@ if (currentTime.getHours() >= 18) {
 inputDate.value = dateTime2YMD(currentTime);
 
 const storeId = sourceData.storeId;
+let sourceStore = "";
+let storeName = "";
 
 async function refresh() {
     divLoading.innerHTML = "正在載入頁面資料...";
@@ -25,18 +27,22 @@ async function refresh() {
     orders = JSON.parse(result.response);
     orders = orders.filter(order => order.totalAmount != 0);
 
-    if (orders.length > 0) {
-        result = await callGetApi("http://127.0.0.1:8001/api/getStores");
-        var stores = JSON.parse(result.response);
-        sourceStoreMap = stores.reduce(function(map, obj) {
-            map[obj.storeId] = obj;
-            return map;
-        }, {});
+    result = await callGetApi("http://127.0.0.1:8001/api/getStores");
+    var stores = JSON.parse(result.response);
+    sourceStoreMap = stores.reduce(function(map, obj) {
+        map[obj.storeId] = obj;
+        return map;
+    }, {});
 
+    if (orders.length > 0) {
         showStore(storeId);
     } else {
         divStores.innerHTML = inputDate.value + " 尚無訂單";
     }
+
+    sourceStore = sourceStoreMap[storeId];
+    storeName = sourceStore.storeName;
+    pStoreName.innerHTML = storeName;
 
     hideElement(divLoading);
     showElement(divMain);
@@ -44,9 +50,7 @@ async function refresh() {
 
 function showStore(storeId) {
     selectStoreId = storeId;
-
-    var sourceStore = sourceStoreMap[storeId];
-    var storeName = sourceStore.storeName;
+    // pStoreName.innerHTML = storeName;
 
     var firstRowColor = "#a2dce1";
     if (sourceStore.uiSettings?.colorForParseOrder2Store != null) {
@@ -94,31 +98,20 @@ function showStore(storeId) {
         }
     });
 
-    addOrsersToDiv(firstRowColor, sourceStore, tmpIsConfirm, divConfirm, totdayStoreTotalAmount);
-    addOrsersToDiv(firstRowColor, sourceStore, tmpNotConfirm, divNotConfirm, totdayStoreTotalAmount);
+    addOrdersToDiv(firstRowColor, sourceStore, tmpIsConfirm, divConfirm, totdayStoreTotalAmount);
+    addOrdersToDiv(firstRowColor, sourceStore, tmpNotConfirm, divNotConfirm, totdayStoreTotalAmount);
 
 }
 
 function showEachOrder(isFirstOrder, tmp, result, totdayStoreTotalAmount) {
-    // if (!isFirstOrder) {
-    //     tmp += `<td colspan="8" style="height: 30px"></td>`;
-    // }
 
     var order = result.order;
     orderDate = order.orderDate.split("-")[1] + "-" + order.orderDate.split("-")[2];
     var storeOrder = result.storeOrder;
     var meals = storeOrder.meals;
 
-    tmp += `<td colspan="8">
-                <button class="btn btn-secondary" style="width: 100%" onclick="openCollapse('${order.orderNo}', 'collapse-body')">單號：${order.orderNo} 出餐時間：${storeOrder.expectTime}</button>
-            </td>`;
-    if (result.storeOrder.isStoreConfirm) {
-        tmp += `<table id="${order.orderNo}" class="collapse-body" style="display: none">`
-    }
-    else {
-        tmp += `<table id="${order.orderNo}" class="collapse-body" style="display: block">`
-    }
-    
+    tmp += `<button class="btn btn-secondary" onclick="openColl('${order.orderNo}')" style="width: 100%">訂單：${order.orderNo} 出餐：${storeOrder.expectTime}</button>`;
+    tmp += `<div id="${order.orderNo}" class="collapse-body ${result.storeOrder.isStoreConfirm ? 'isClose' : 'isOpen'}"><table>`;
 
     var totalAmount = storeOrder.totalAmount;
     var totalQty = storeOrder.totalQty;
@@ -171,11 +164,7 @@ function showEachOrder(isFirstOrder, tmp, result, totdayStoreTotalAmount) {
         }
     });
 
-    tmp += createUpdateRow("", "總計", "--", totalQty, "--", parseNumber2ShowThousand(totalAmount), "",
-        (storeOrder.isStoreConfirm ?? false) ?
-        `<button class="btn btn-secondary" style="writing-mode: vertical-lr;" onclick="updateStoreOrderConfirm('${order.orderId}', '${storeId}', false)">取消確認</button>` :
-        `<button class="btn btn-failed btn-bold" style="writing-mode: vertical-lr;" onclick="updateStoreOrderConfirm('${order.orderId}', '${storeId}', true)">確認請點我</button>`,
-        "", "", "");
+    tmp += createRow("", "總計", "--", totalQty, "--", parseNumber2ShowThousand(totalAmount), "", "", "", "");
 
     var feeAmount = storeOrder.feeAmount;
     if (inputCbkShowFeeAmount.checked) {
@@ -196,19 +185,20 @@ function showEachOrder(isFirstOrder, tmp, result, totdayStoreTotalAmount) {
 
     tmp += createRow("", "備註", storeOrder.memo ?? "", "", "", "", "", "", "");
     tmp += createRow("", "餐具", order.isNeedTableware ? "是" : "否", "", "", "", "", "", "");
-    tmp += createRow("", "收據", order.isNeedReceipt ?
-        `是${order.taxIdNumber != null ? `(統編${order.taxIdNumber})` : ""}` : "否", "", "", "", "", "", "");
+    tmp += createRow("", "收據", order.isNeedReceipt ? `是${order.taxIdNumber != null ? `(統編${order.taxIdNumber})` : ""}` : "否", "", "", "", "", "", "");
     isFirstOrder = false;
 
     tmp += `<tr>
         <td colspan="7" style="text-align:center; color:red; font-weight: 600">餐點請務必先裝入塑膠袋，再裝入保溫袋</td>
-        </tr>`;
-    tmp += `</table>`;
+        </tr></table>`;
+    tmp += (storeOrder.isStoreConfirm ?? false) ?
+    `<button class="btn btn-secondary" onclick="updateStoreOrderConfirm('${order.orderId}', '${storeId}', false)">取消確認</button>` :
+    `<button class="btn btn-failed btn-bold" onclick="updateStoreOrderConfirm('${order.orderId}', '${storeId}', true)">${order.orderNo} ${storeOrder.expectTime}出餐</button></div>`;
 
     return {'isFirstOrder': isFirstOrder, 'tmp': tmp, 'totdayStoreTotalAmount': totdayStoreTotalAmount};
 }
 
-function addOrsersToDiv(firstRowColor, sourceStore, tmp, div, totdayStoreTotalAmount) {
+function addOrdersToDiv(firstRowColor, sourceStore, tmp, div, totdayStoreTotalAmount) {
     var contentHTML =
         `<a href="javascript:void(0)" onclick="tableContentCapture()">下載成圖檔</a>`;
 
@@ -354,6 +344,7 @@ async function updateStoreOrderConfirm(orderId, storeId, isStoreConfirm) {
         });
         // updateContentUi();
         showStore(storeId);
+        // setInterval(myCallback, 100);
     }
 
     hideElement(divLoading);
@@ -400,7 +391,6 @@ function caculateUpdateConunt(storeId) {
         "isConfirm": isConfirm
     };
 }
-
 
 
 refresh();
