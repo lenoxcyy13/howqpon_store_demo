@@ -7,6 +7,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberControllerV2;
 
+use Tymon\JWTAuth\Manager;
+use Tymon\JWTAuth\Token;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -21,7 +24,6 @@ use App\Http\Controllers\MemberControllerV2;
 Route::get('/profile.html', function (Request $request) {
     $userId = $request->session()->get('userId');
     $user = (new UserController())->getUserProfileByUserId($userId);
-    dd($user);
     return view('profile', ['userId' => $userId]);
 });
 
@@ -30,7 +32,18 @@ Route::get('/logout', function(Request $request) {
     return redirect("login.html");
 });
 
-Route::get('/login.html', function () {
+Route::get('/login/{token}', function(Request $request, $token = null) {
+    $token = new Token($token);
+    try {
+        $decodedToken = JWTAuth::decode($token);
+        // dd($decodedToken);
+        dd($decodedToken->getClaims());
+        $storeId = $decodedToken->getClaim('sub');
+        $role = $decodedToken->getClaim('role');
+    } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
+        Log::error($e);
+    }
+    dd($token);
     return view('login');
 });
 

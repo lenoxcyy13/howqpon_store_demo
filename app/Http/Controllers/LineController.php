@@ -183,7 +183,6 @@ class LineController extends Controller{
 
         } catch(Exception $e){
             Log::error($e);
-            dd($e);
             return redirect("login.html");
         }
     }
