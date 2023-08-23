@@ -58,7 +58,6 @@ function showStore(storeId) {
     }
 
     var tmp = "";
-    tmp += createRow("單號", "店家", "品項", "數量", "價格", "小計", "出餐", firstRowColor);
 
     updateTotal(storeId, storeName);
 
@@ -155,45 +154,41 @@ function showEachOrder(isFirstOrder, tmp, result, totdayStoreTotalAmount) {
         var mealName = meal.mealName;
         var mealAmount = meal.amount;
 
-        if (mealIndex == 0) {
-            tmp += createUpdateRow("", "", mealName, meal.qty, parseNumber2ShowThousand(mealAmount), 
-                                   parseNumber2ShowThousand(mealAmount * meal.qty), "", "", "", mealColor, "");
-        } else {
-            tmp += createRow("", "", mealName, meal.qty, parseNumber2ShowThousand(mealAmount), 
-                             parseNumber2ShowThousand(mealAmount * meal.qty), "", "", mealColor);
-        }
+        tmp += createRow(mealIndex+1+'.', mealName, meal.qty, parseNumber2ShowThousand(mealAmount * meal.qty));
     });
 
-    tmp += createRow("", "總計", "--", totalQty, "--", parseNumber2ShowThousand(totalAmount), "", "", "", "");
+    tmp += createRow("總計", "--", totalQty, parseNumber2ShowThousand(totalAmount));
 
     var feeAmount = storeOrder.feeAmount;
     if (inputCbkShowFeeAmount.checked) {
-        tmp += createRow("", "服務費", "--", "--", "", "-" + parseNumber2ShowThousand(feeAmount), "", "", "");
+        tmp += createRow("服務費", "--", "--", "-" + parseNumber2ShowThousand(feeAmount));
     }
 
     if(storeOrder.storeMealLossAmount != null && storeOrder.storeMealLossAmount > 0){
-        tmp += createRow("", "餐損(店家)", "--", "--", "", "-" + parseNumber2ShowThousand(storeOrder.storeMealLossAmount), "", "#FF8153", "");
+        tmp += createRow("餐損(店家)", "--", "--", "-" + parseNumber2ShowThousand(storeOrder.storeMealLossAmount), "#FF8153");
     }
 
     if(storeOrder.storeFreightAmount != null && storeOrder.storeFreightAmount > 0){
-        tmp += createRow("", "運費(店家)", "--", "--", "", "-" + parseNumber2ShowThousand(storeOrder.storeFreightAmount), "", "", "");
+        tmp += createRow("運費(店家)", "--", "--", "-" + parseNumber2ShowThousand(storeOrder.storeFreightAmount));
     }
 
     var storePayableAmount = (totalAmount - feeAmount - (storeOrder.storeMealLossAmount ?? 0) - (storeOrder.storeFreightAmount ?? 0));
-    tmp += createRow("", "應付帳款", "--", "--", "", parseNumber2ShowThousand(storePayableAmount), "", "", "");
+    tmp += createRow("應付帳款", "--", "--", parseNumber2ShowThousand(storePayableAmount));
     totdayStoreTotalAmount += storePayableAmount;
 
-    tmp += createRow("", "備註", storeOrder.memo ?? "", "", "", "", "", "", "");
-    tmp += createRow("", "餐具", order.isNeedTableware ? "是" : "否", "", "", "", "", "", "");
-    tmp += createRow("", "收據", order.isNeedReceipt ? `是${order.taxIdNumber != null ? `(統編${order.taxIdNumber})` : ""}` : "否", "", "", "", "", "", "");
+    tmp += createRow("備註", storeOrder.memo ?? "", "", "");
+    tmp += createRow("餐具", order.isNeedTableware ? "是" : "否", "", "");
+    tmp += createRow("收據", order.isNeedReceipt ? `是${order.taxIdNumber != null ? `(統編${order.taxIdNumber})` : ""}` : "否", "", "");
     isFirstOrder = false;
 
     tmp += `<tr>
         <td colspan="7" style="text-align:center; color:red; font-weight: 600">餐點請務必先裝入塑膠袋，再裝入保溫袋</td>
         </tr></table>`;
     tmp += (storeOrder.isStoreConfirm ?? false) ?
-    `<button class="btn btn-secondary" onclick="updateStoreOrderConfirm('${order.orderId}', '${storeId}', false)">取消確認</button>` :
-    `<button class="btn btn-failed btn-bold" onclick="updateStoreOrderConfirm('${order.orderId}', '${storeId}', true)">${order.orderNo} ${storeOrder.expectTime}出餐</button></div>`;
+    `<button class="btn btn-secondary btn-bold" onclick="updateStoreOrderConfirm('${order.orderId}', '${storeId}', false)" style="margin: 10px">取消確認</button></div>` :
+    `<button class="btn btn-failed btn-bold" onclick="updateStoreOrderConfirm('${order.orderId}', '${storeId}', true)" style="margin: 10px">
+        <p style="margin-bottom: 0px">${order.orderNo} ${storeOrder.expectTime}出餐</p>
+        <p style="margin-bottom: 0px">共${totalQty}份 點我確認</p></button></div>`;
 
     return {'isFirstOrder': isFirstOrder, 'tmp': tmp, 'totdayStoreTotalAmount': totdayStoreTotalAmount};
 }
@@ -258,52 +253,21 @@ function updateTotal(storeId, storeName) {
 
 }
 
-function createUpdateRow(r1, r2, r3, r4, r5, r6, r7, r8, bgcolor, mealNameColor, timeColor) {
-    return `<tr bgcolor="${bgcolor}">
-            <td class="td_no" onclick="onClickTd(this)">${r1}</td>
-            <td class="td_store" onclick="onClickTd(this)">${r2}</td>
-            <td class="td_meal" onclick="onClickTd(this)" style="color:${mealNameColor}">${r3}</td>
-            <td class="td_price" onclick="onClickTd(this)">${r4}</td>
-            <td class="td_qty" onclick="onClickTd(this)">${r5}</td>
-            <td class="td_amount" onclick="onClickTd(this)">${r6}</td>
-            <td class="td_time" onclick="onClickTd(this)" style="color:${timeColor}">${r7}</td>
-            <td class="td_update">${r8}</td>
-            </tr>`;
-}
-
-function createRow(r1, r2, r3, r4, r5, r6, r7, bgcolor, mealNameColor) {
-    if (r2 == "收據" && (r3.indexOf("是") == 0)) {
+function createRow(r1, r2, r3, r4, bgcolor, mealNameColor) {
+    if (r1 == "收據" && (r2.indexOf("是") == 0)) {
         return `<tr bgcolor="${bgcolor}">
             <td class="td_no">${r1}</td>
-            <td class="td_store">${r2}</td>
-            <td class="td_meal" style="color:red">${r3}</td>
-            <td class="td_price">${r4}</td>
-            <td class="td_qty">${r5}</td>
-            <td class="td_amount">${r6}</td>
-            <td class="td_time">${r7}</td>
-            </tr>`;
-    }
-
-    if (r2 == "所有訂單總價" || r1 == "單號") {
-        return `<tr class="tr_top" onclick="onClickTopTr(this)" style="background-color: ${bgcolor};">
-            <td class="td_no">${r1}</td>
-            <td class="td_store">${r2}</td>
-            <td class="td_meal">${r3}</td>
-            <td class="td_price">${r4}</td>
-            <td class="td_qty">${r5}</td>
-            <td class="td_amount">${r6}</td>
-            <td class="td_time">${r7}</td>
+            <td class="td_meal" style="color:red">${r2}</td>
+            <td class="td_qty">${r3}</td>
+            <td class="td_amount">${r4}</td>
             </tr>`;
     }
 
     return `<tr style="background-color: ${bgcolor};">
         <td class="td_no" onclick="onClickTd(this)">${r1}</td>
-        <td class="td_store" onclick="onClickTd(this)">${r2}</td>
-        <td class="td_meal" onclick="onClickTd(this)" style="color:${mealNameColor}">${r3}</td>
-        <td class="td_price" onclick="onClickTd(this)">${r4}</td>
-        <td class="td_qty" onclick="onClickTd(this)">${r5}</td>
-        <td class="td_amount" onclick="onClickTd(this)">${r6}</td>
-        <td class="td_time" onclick="onClickTd(this)">${r7}</td>
+        <td class="td_meal" onclick="onClickTd(this)" style="color:${mealNameColor}">${r2}</td>
+        <td class="td_qty" onclick="onClickTd(this)">${r3}</td>
+        <td class="td_amount" onclick="onClickTd(this)">${r4}</td>
         </tr>`;
 }
 
@@ -352,23 +316,26 @@ async function updateStoreOrderConfirm(orderId, storeId, isStoreConfirm) {
 }
 
 function tableContentCapture() {
-    var tdUpdates = document.getElementsByClassName("td_update");
+    var hides = document.getElementsByClassName("btn-bold");
+    hides += document.getElementsByTagName("a");
+    console.log(hides);
+    console.log(hide2);
 
-    for (let element of tdUpdates) {
-        hideElement(element);
+    for (let hide of hides) {
+        hideElement(hide);
     }
 
     var store = sourceStoreMap[selectStoreId];
     var fileName = inputDate.value.replaceAll("-", "") + "_" + store.storeName;
 
-    html2canvas(document.querySelector("#tableContent")).then(function(canvas) {
+    html2canvas(document.querySelector("#divContent")).then(function(canvas) {
         a = document.createElement('a');
         a.href = canvas.toDataURL("image/jpeg", 0.92).replace("image/jpeg", "image/octet-stream");
         a.download = fileName + '.jpg';
         a.click();
 
-        for (let element of tdUpdates) {
-            showElement(element);
+        for (let hide of hides) {
+            showElement(hide);
         }
     });
 }

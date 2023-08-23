@@ -40,13 +40,20 @@
             text-align: center;
         }
 
-        table td {
-            border: 1px solid #D3D3D3;
+        table {
+            width: 100%;
         }
 
-        .td_update {
-            text-align: center;
-            border: 0;
+        table td {
+            /* border: 1px solid #D3D3D3; */
+        }
+
+        .td_no {
+            text-align: right;
+        }
+
+        .td_meal {
+            text-align: left;
         }
 
         #divTotal {
@@ -74,7 +81,7 @@
         }
 
         .collapse-body {
-            padding: 0 18px;
+            padding: 0px;
             overflow: hidden;
             display: block;
             text-align: center;
