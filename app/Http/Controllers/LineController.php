@@ -231,15 +231,10 @@ class LineController extends Controller{
                 }
             }
             // dd($ownStoreNum);
+            // dd($storeId);
             if($state->mode == $this->stateLoginMemberMode){
                 if($isLoginSuccess){
-                    // dd($isLoginSuccess);
-                    if($ownStoreNum == 1) {
-                        return redirect(`store?storeNo=${storeId}.html`);
-                    }
-                    else {
-                        return redirect("profile.html");
-                    }
+                    return redirect("profile.html");
                 } else {
                     // dd($isLoginSuccess);
                     return redirect("login");

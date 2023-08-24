@@ -95,8 +95,8 @@
             const div_store = document.createElement("div");
             div_store.style.display = "flex";
             div_store.style.flexDirection = "row-reverse";
-            div_store.style.justifyContent = "space-between";
-            div_store.style.width = "100%";
+            // div_store.style.justifyContent = "space-between";
+            // div_store.style.width = "100%";
 
             const btn_store = document.createElement("button");
             btn_store.classList = 'btn';
