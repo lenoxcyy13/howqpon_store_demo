@@ -7,8 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberControllerV2;
 
-use Tymon\JWTAuth\Manager;
-use Tymon\JWTAuth\Token;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,34 +23,31 @@ use Tymon\JWTAuth\Token;
 Route::get('/profile.html', function (Request $request) {
     $userId = $request->session()->get('userId');
     $user = (new UserController())->getUserProfileByUserId($userId);
-    return view('profile', ['userId' => $userId]);
+
+    $roles = (new UserController())->checkRoles($userId);
+    $data = [
+        "name" => $user['name'],
+        "pictureUrl" => $user['pictureUrl'],
+        "roles" => $roles,
+    ];
+    $data = base64_encode(json_encode($data));
+    $data = base64_encode($data);
+    return view('profile', ['data' => $data]);
 });
 
 Route::get('/logout', function(Request $request) {
     $request->session()->forget('userId');
-    return redirect("login.html");
+    return redirect("login");
 });
 
-Route::get('/login/{token}', function(Request $request, $token = null) {
-    $token = new Token($token);
-    try {
-        $decodedToken = JWTAuth::decode($token);
-        // dd($decodedToken);
-        dd($decodedToken->getClaims());
-        $storeId = $decodedToken->getClaim('sub');
-        $role = $decodedToken->getClaim('role');
-    } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
-        Log::error($e);
-    }
-    dd($token);
-    return view('login');
-});
-
-Route::get('', function () {
-    return view('login');
+Route::get('/login', function(Request $request) {
+    $token = $request -> token;
+    return view('login', ['token' => $token]);
+    // echo '<script>alert("請向好客萌索取店家登入連結")</script>';
 });
 
 Route::get('/lineLogin', function(Request $request) {
+
     if(str_starts_with($request->url(), "http://localhost:8003")){
         return redirect("http://127.0.0.1:8003/lineLogin".str_replace($request->url(), '',$request->fullUrl()));
     }
@@ -68,14 +64,17 @@ Route::get('/lineLoginRedirectUrl', function(Request $request) {
     return (new LineController())->executeLineLoginRedirectUrl($request);
 });
 
-Route::get('/store.html', function (Request $request) {
+Route::get('/store', function (Request $request) {
     $userId = $request->session()->get('userId');
+    $storeId = $request->storeId;
+    $storeId = preg_replace('/\.html$/', '', $storeId);
+
     $user = (new UserController())->getUserProfileByUserId($userId);
     if($user == null) {
-        return redirect('login.html');
+        return redirect('login');
     }
     else {
-        $data = (new UserController())->getPremissionByUserId($userId);
+        $data = (new UserController())->checkRole($userId, $storeId);
     }
     
     if ($data != null) {
@@ -84,8 +83,7 @@ Route::get('/store.html', function (Request $request) {
         return view('welcome',  ["data" => $data]);
     }
     else {
-        // return view('roleAssign', ["userId" => $userId]);
-        return redirect('login.html');
+        return redirect('login');
     }
     
 });

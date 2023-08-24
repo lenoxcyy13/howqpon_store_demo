@@ -25,6 +25,20 @@
             justify-content: space-between;
         }
 
+        #divMain {
+            width: auto;
+            height: auto;
+            font-size: 14px;
+        }
+
+        #divOwnStores {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 80%;
+            margin: auto;
+        }
+
     </style>
     
 </head>
@@ -32,13 +46,20 @@
 <body>
 
     <div id="divHeader">
-        <button class="btn btn-block" type="submit" onclick="window.location.href='store.html'">訂單</button>
-        <a href="store.html"><img width="54" height="54" src="images/howqpon.ico" alt="howqpon"></a>
+        <a href="profile.html"><img width="54" height="54" src="images/howqpon.ico" alt="howqpon"></a>
         <button class="btn btn-block" type="submit" onclick="window.location.href='logout'">登出</button>
     </div>
 
-    <div id='divLoading' style="display: none;">正在載入頁面資料...</div>
-    <div id="divMain" style="display: none;">
+    <div id="divMain">
+        <div class="mt-4 text-center">
+            <div>
+                <img id="imgPicture" style="border-radius: 50%; width:150px;"></img>
+            </div>
+            <div style="font-size:24px; margin:8px">
+                <font id="fontName"></font>
+            </div>
+            <div id=divOwnStores></div>
+        </div>
     </div>
     </div>
 
@@ -50,5 +71,71 @@
 <script src="js/orderProvider.js"></script>
 
 <script>
-var userId = `<?php echo $userId; ?>`;
+    var data = '<?php echo $data; ?>';
+    sourceData = Base64.decode(data);
+    sourceData = Base64.decode(sourceData);
+    sourceData = JSON.parse(sourceData);
+
+    imgPicture.src = sourceData.pictureUrl;
+    fontName.innerHTML = sourceData.name;
+
+    async function getStoreInfo() {
+        result = await callGetApi("http://127.0.0.1:8001/api/getStores");
+        let stores = JSON.parse(result.response);
+        sourceStoreMap = stores.reduce(function(map, obj) {
+            map[obj.storeId] = obj;
+            return map;
+        }, {});
+
+
+        const div = document.getElementById('divOwnStores');
+        for (let i = 0; i < sourceData.roles.length; i++){
+            const store = sourceStoreMap[sourceData.roles[i].storeId]
+
+            const div_store = document.createElement("div");
+            div_store.style.display = "flex";
+            div_store.style.flexDirection = "row-reverse";
+            div_store.style.justifyContent = "space-between";
+            div_store.style.width = "100%";
+
+            const btn_store = document.createElement("button");
+            btn_store.classList = 'btn';
+            btn_store.onclick = () => window.location = `store?storeId=${store.storeId}.html`;
+            btn_store.innerHTML = store.storeName;
+            btn_store.innerHTML += '的';
+            if(sourceData.roles[i].roleId == '0'){
+                btn_store.innerHTML += '好客萌小編';
+            }
+            if(sourceData.roles[i].roleId == '1'){
+                btn_store.innerHTML += '店長';
+                const btn_link = document.createElement("button");
+                btn_link.classList = 'btn btn-secondary';
+                btn_link.innerHTML = '指派店員';
+                btn_link.onclick = () => generateToken(store.storeNo)
+                div_store.appendChild(btn_link);
+            }
+            if(sourceData.roles[i].roleId == '2'){
+                btn_store.innerHTML += '店員';
+            }
+            
+            div_store.appendChild(btn_store);
+
+            div.appendChild(div_store);
+
+        }
+    }
+
+    async function generateToken(storeNo) {
+        const result = await callGetApi("http://127.0.0.1:8001/api/storeLoginToken?storeNo=" + storeNo + "&role=clerk");
+        const returnURL = `http://127.0.0.1:8003/login?token=${result.response}`;
+        setTimeout(async () => {
+            await navigator.clipboard.writeText(returnURL);
+            alert("已複製連結");
+        }, 100);
+        // return returnURL
+    }
+
+    getStoreInfo();
+
+
 </script>

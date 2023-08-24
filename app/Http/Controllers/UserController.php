@@ -70,15 +70,78 @@ class UserController extends Controller {
         return $tmps;
     }
 
-    public function getPremissionByUserId($userId) {
+    public function checkRoles($userId) {
+
         $result = null;
         $check = DB::table("role")->where("userId", $userId)->exists();
 
+        if($check){
+            $result = DB::table("role")->where("userId", $userId)->get();
+            $storeRoles = [];
+            $i = 0;
+            foreach ($result as $item) {
+                $storeRoles[$i] = [
+                    'storeId' => $item->storeId,
+                    'roleId' => $item->roleId,
+                ];
+                $i++;
+            }
+        }
+
+        return $storeRoles;
+    }
+
+    public function checkRole($userId, $storeId) {
+        $result = null;
+        $check = DB::table("role")->where("userId", $userId)
+                                  ->where("storeId", $storeId)
+                                  ->exists();
 
         if($check){
-            $result = DB::table("role")->where("userId", $userId)->get()[0];
-        }
+            $result = DB::table("role")->where("userId", $userId)
+                                       ->where("storeId", $storeId)
+                                       ->get();
+            }
+        
         return $result;
     }
+
+    public function createRole(Request $request) {
+        try{
+            // dd($request);
+            
+            date_default_timezone_set('Asia/Taipei');
+            $createTime = date('Y-m-d H:i:s');
+
+            if($request["roleName"] == "manager") {
+                $roleId = 1;
+            }
+            if($request["roleName"] == "clerk")  {
+                $roleId = 2;
+            }
+            else {
+                $roleId = 0;
+            }
+
+            $tmps = [
+                'userId' => $request['userId'],
+                'storeId' => $request["storeId"],
+                'roleId' => $roleId,
+                'roleName' => $request["roleName"],
+                'createTime' => $createTime,
+            ];
+
+            $result = DB::table('role')->insert($tmps);
+            // dd($result);
+            if($result == 1){
+                return ["status" => "OK", "userId" => $request['userId']];
+            } else {
+                return ["status" => "INSERT_ERROR"];
+            }
+        } catch(e){
+            return ["status" => "SERVER_ERROR", "message" => e];
+        }
+    }
+
 
 }

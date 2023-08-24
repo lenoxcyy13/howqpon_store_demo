@@ -95,8 +95,7 @@
 <body>
 
     <div id="divHeader">
-        <button class="btn btn-block" type="submit" onclick="window.location.href='profile.html'">用戶</button>
-        <a href="store.html"><img width="54" height="54" src="images/howqpon.ico" alt="howqpon"></a>
+        <a href="profile.html"><img width="54" height="54" src="images/howqpon.ico" alt="howqpon"></a>
         <button class="btn btn-block" type="submit" onclick="window.location.href='logout'">登出</button>
     </div>
 

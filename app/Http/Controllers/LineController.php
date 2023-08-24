@@ -4,8 +4,13 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\UserController;
 use Exception;
 use Illuminate\Support\Facades\Log;
+
+// use Tymon\JWTAuth\Manager;
+// use Tymon\JWTAuth\Token;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class LineController extends Controller{
 
@@ -22,6 +27,7 @@ class LineController extends Controller{
     // var $stateLoginCreateGroupOrder = "s4";
 
     public function getLineLoginPath(Request $request){
+        // dd($request);
         $host = $request->getSchemeAndHttpHost();
 
         $state = [
@@ -53,8 +59,8 @@ class LineController extends Controller{
             }
         }
 
-        if($request->project != null){
-            $state["project"] = $request->project;
+        if($request->token != null){
+            $state["token"] = $request->token;
         }
 
         $state = base64_encode(json_encode($state));
@@ -109,9 +115,33 @@ class LineController extends Controller{
 
     public function executeLineLoginRedirectUrl(Request $request){
         try {
+            // dd($request);
             $code = $request->code;
             $state = $request->state;
             $state = json_decode(base64_decode($state));
+            // dd($state);
+            
+            if(isset($state->token)) {
+                $tokenParts = explode('.', $state->token);
+                if (count($tokenParts) === 3) {
+                    // Decode the Header and Payload from base64
+                    $header = base64_decode($tokenParts[0]);
+                    $payload = base64_decode($tokenParts[1]);
+                
+                    // Parse the JSON-encoded Header and Payload
+                    $decodedHeader = json_decode($header, true);
+                    $decodedPayload = json_decode($payload, true);
+
+                } else {
+                    echo "Invalid JWT token structure";
+                }
+                $storeId = intval($decodedPayload['sub']);
+                $role = $decodedPayload['role'];
+                $noToken = false;
+            }
+            else {
+                $noToken = true;
+            }
             
             $lineTokenResult = $this->getLineToken($code, $request->url());
             $lineTokenResult = json_decode($lineTokenResult);
@@ -121,14 +151,21 @@ class LineController extends Controller{
             $memberName = null;
             $userId = null;
 
+            $ownStoreNum = null;
+
             if(isset($lineTokenResult->access_token)){
                 $lineUserProfileResult = $this->getUserProfile($lineTokenResult->access_token);
                 $lineUserProfileResult = json_decode($lineUserProfileResult);
+                // dd($lineUserProfileResult);
+
                 if(isset($lineUserProfileResult->userId)){
                     $memberName = $lineUserProfileResult->displayName;
 
                     $memberController = new MemberController();
+                    $userController = new UserController();
                     $result = $memberController->isMemberExist(new Request(["lineUserId" => $lineUserProfileResult->userId]));
+                    // dd($result);
+
                     if($result["status"] == "OK"){
                         date_default_timezone_set('Asia/Taipei');
                         $currentTime = date('Y-m-d H:i:s');
@@ -145,10 +182,17 @@ class LineController extends Controller{
                             ]));
                             
                             if($result["status"] == "OK"){
+                                // dd($result, $result["userId"], $storeId, $role);
                                 $userId = $result["userId"];
                                 session(['userId' => $result["userId"]]);
-                                $isLoginSuccess = true;
+                    
                                 $isNewCreate = true;
+                                $result = $userController->createRole(new Request([
+                                    "userId" => $result["userId"],
+                                    "storeId" => $storeId,
+                                    "roleName" => $role,
+                                ]));
+                                $isLoginSuccess = true;
                             }
                         } else if($result["result"] == "true"){
                             $userId = $result["userId"];
@@ -158,32 +202,56 @@ class LineController extends Controller{
                                 "lineLoginToken" => $lineTokenResult,
                                 "lineProfile" => $lineUserProfileResult,
                             ]));
+                            // dd($result);
     
                             if($result["status"] == "OK"){
                                 session(['userId' => $userId]);
-                                $isLoginSuccess = true;
+                                // dd($userId);
+                                $roleCheck = $userController->checkRoles($userId);
+                                $ownStoreNum = count($roleCheck);
+
+                                if($roleCheck != null && $noToken){
+                                    // dd('no token');
+                                    $isLoginSuccess = true;
+                                }
+                                else {
+                                    // dd('no data in role table');
+                                    $result = $userController->createRole(new Request([
+                                        "userId" => $userId,
+                                        "storeId" => $storeId,
+                                        "roleName" => $role,
+                                    ]));
+                                    $ownStoreNum += 1;
+                                    $isLoginSuccess = true;
+                                }
+                                // dd($isLoginSuccess);
                             }
                         }
                     }
                 }
             }
-            
+            // dd($ownStoreNum);
             if($state->mode == $this->stateLoginMemberMode){
                 if($isLoginSuccess){
                     // dd($isLoginSuccess);
-                    return redirect("store.html");
+                    if($ownStoreNum == 1) {
+                        return redirect(`store?storeNo=${storeId}.html`);
+                    }
+                    else {
+                        return redirect("profile.html");
+                    }
                 } else {
                     // dd($isLoginSuccess);
-                    return redirect("login.html");
+                    return redirect("login");
                 }
             } else {
                 // dd($isLoginSuccess);
-                return redirect("login.html");
+                return redirect("login");
             }
 
         } catch(Exception $e){
             Log::error($e);
-            return redirect("login.html");
+            return redirect("login");
         }
     }
 

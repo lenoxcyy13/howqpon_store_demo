@@ -1,6 +1,7 @@
 sourceData = Base64.decode(data);
 sourceData = Base64.decode(sourceData);
 sourceData = JSON.parse(sourceData);
+sourceData = sourceData[0];
 
 var currentTime = new Date();
 if (currentTime.getHours() >= 18) {
