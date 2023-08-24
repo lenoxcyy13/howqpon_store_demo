@@ -182,14 +182,17 @@ function showEachOrder(isFirstOrder, tmp, result, totdayStoreTotalAmount) {
     tmp += createRow("收據", order.isNeedReceipt ? `是${order.taxIdNumber != null ? `(統編${order.taxIdNumber})` : ""}` : "否", "", "");
     isFirstOrder = false;
 
-    tmp += `<tr>
-        <td colspan="7" style="text-align:center; color:red; font-weight: 600">餐點請務必先裝入塑膠袋，再裝入保溫袋</td>
+    tmp += `<tr><td colspan="7" style="text-align:center; color:red; font-weight: 600">收據發票請開【原價金額】不要扣除服務費</td></tr>
+        <tr><td colspan="7" style="text-align:center; color:red; font-weight: 600">餐點請務必先裝入塑膠袋，再裝入保溫袋</td>
         </tr></table>`;
     tmp += (storeOrder.isStoreConfirm ?? false) ?
     `<button class="btn btn-secondary btn-bold" onclick="updateStoreOrderConfirm('${order.orderId}', '${storeId}', false)" style="margin: 10px">取消確認</button></div>` :
     `<button class="btn btn-failed btn-bold" onclick="updateStoreOrderConfirm('${order.orderId}', '${storeId}', true)" style="margin: 10px">
-        <p style="margin-bottom: 0px">${order.orderNo} ${storeOrder.expectTime}出餐</p>
-        <p style="margin-bottom: 0px">共${totalQty}份 點我確認</p></button></div>`;
+        <div style="display: flex;">
+            <h3 style="margin-bottom: 0px">${order.orderNo}</h3>
+            <h3 style="margin-left: 30px">${storeOrder.expectTime}出餐</h3>
+        </div>
+        <h3 style="margin-bottom: 0px">共${totalQty}份 &nbsp; 點我確認</h3></button></div>`;
 
     return {'isFirstOrder': isFirstOrder, 'tmp': tmp, 'totdayStoreTotalAmount': totdayStoreTotalAmount};
 }
