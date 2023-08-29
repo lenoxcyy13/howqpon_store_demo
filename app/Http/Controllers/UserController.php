@@ -116,7 +116,7 @@ class UserController extends Controller {
             if($request["roleName"] == "manager") {
                 $roleId = 1;
             }
-            if($request["roleName"] == "clerk")  {
+            elseif($request["roleName"] == "clerk")  {
                 $roleId = 2;
             }
             else {
@@ -130,6 +130,7 @@ class UserController extends Controller {
                 'roleName' => $request["roleName"],
                 'createTime' => $createTime,
             ];
+            // dd($tmps);
 
             $result = DB::table('role')->insert($tmps);
             // dd($result);
