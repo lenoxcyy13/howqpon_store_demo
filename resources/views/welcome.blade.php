@@ -13,7 +13,6 @@
     <link href="{{ asset('css/home/custom.css') }}" rel="stylesheet">
     <link href="css/mystyle.css" rel="stylesheet">
     <link href="css/bootstrap.css" rel="stylesheet">
-    <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
 
     <title>本日訂單</title>
 
@@ -44,12 +43,10 @@
             width: 100%;
         }
 
-        table td {
-            /* border: 1px solid #D3D3D3; */
-        }
-
         .td_no {
-            text-align: right;
+            text-align: left;
+            padding-left: 5px;
+            width: 75px;
         }
 
         .td_meal {
@@ -66,17 +63,34 @@
             width: 50%;
             border-style: solid;
             border-color: #efefef;
+            border-bottom-width: 4px;
         }
 
-        .tabNav:hover {     
-            border-bottom-color: var(--green-500);;    
+        .tabNav:hover {
+            font-weight: 500;
+            outline: none;
         }
 
-        .collapse-head {
+        .tabNav.Confirm:hover, .tabNav.Confirm.Selected {     
+            border-bottom-color: var(--green-500);
+            color: var(--green-500) !important;
+        }
+
+        .tabNav.notConfirm:hover, .tabNav.notConfirm.Selected {     
+            border-bottom-color: var(--red-500);    
+            color: var(--red-500) !important;
+        }
+
+        .collapse-head, .collapse-head:hover {
+            display: flex;
+            justify-content: space-between;
+            font-family: monospace;
             font-weight: bold;
+            font-size: 16px !important;
+            width: 100%
         }
 
-        .active, .collapsible:hover {
+        .focus, .collapsible:hover {
             background-color: #ccc;
         }
 
@@ -108,12 +122,12 @@
         <div>
             <div id="divStores" class="floatLeft" style="display: none"></div>
             <div class="floatLeft">
-                <div id="divSort" style="display: none">
+                <div id="divSort" style="display: ">
                     顯示服務費<input id="inputCbkShowFeeAmount" type="checkbox" oninput="showStore(storeId)" checked>
                 </div>
                 <div id="divTotal" class="navBar">
-                    <button id="btn_not" class="tabNav" onclick="openTab('divNotConfirm', 'confirm')">待確認</button>
-                    <button id="btn_confirm" class="tabNav" onclick="openTab('divConfirm', 'confirm')">已確認</button>
+                    <button id="btn_not" class="tabNav notConfirm Selected" onclick="openTab('btn_not', 'divNotConfirm', 'confirm')">待確認</button>
+                    <button id="btn_confirm" class="tabNav Confirm" onclick="openTab('btn_confirm', 'divConfirm', 'confirm')">已確認</button>
                 </div>
                 <div id="divContent">
                     <div id="divNotConfirm" class="confirm"></div>
@@ -134,14 +148,30 @@
 <script src="{{ asset('js/ordersToday.js') }}"></script>
 
 <script>
-    
-    function openTab(idName, className) {
+
+    let btnFocus = document.getElementById('btn_not');
+
+    function openTab(btnId, tabId, className) {
+        event.preventDefault();
         var i;
         var x = document.getElementsByClassName(className);
         for (i = 0; i < x.length; i++) {
             x[i].style.display = "none";
         }
-        document.getElementById(idName).style.display = "block";
+        document.getElementById(tabId).style.display = "block";
+
+        let button = document.getElementById(btnId);
+        if (btnFocus != button) {
+            if (btnFocus) {
+                btnFocus.blur();
+                btnFocus.classList.remove('Selected');
+            }
+            button.focus();
+            button.classList.add('Selected');
+            btnFocus = button;
+        }
+
+        setInterval(myCallback, 100);
     }
 
     function openColl(idName) {
@@ -168,7 +198,6 @@
     }
 
     const myInterval = setInterval(myCallback, 100);
-
 
 </script>
 
