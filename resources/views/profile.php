@@ -18,6 +18,92 @@
     <title>身份</title>
 
     <style>
+
+        html {
+            overflow: hidden;
+        }
+
+        .media {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* desktop */
+        @media (min-width: 992px) {
+            .media {
+                max-width: 800px;
+            }
+            #divOwnStores {
+                width: 30%;
+            }
+        }
+
+        /* iPad and iPad Mini */
+        @media (min-width: 768px) and (max-width: 991px) {
+            .media {
+                max-width: 600px;
+            }
+            #divOwnStores {
+                width: 50%;
+            }
+        }
+
+        /* iPhone and similar devices */
+        @media (max-width: 767px) {
+            .media {
+                max-width: 100%;
+            }
+            #divOwnStores {
+                width: 80%;
+            }
+        }
+
+        .nav-btn {
+            
+        }
+
+        .nav-btn > label {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            padding: 13px;
+        }
+
+        .nav-btn > label > span {
+            display: block;
+            width: 25px;
+            height: 10px;
+            border-top: 2px solid var(--green-500);
+        }
+
+        .nav-btn > label:hover,.nav  #nav-check:checked ~ .nav-btn > label {
+            background-color: var(--green-50);
+        }
+
+        #nav-check:checked ~ .nav-links {
+            height: 100%;
+        }
+
+        .nav-links {
+            position: absolute;
+            display: block;
+            height: 0px;
+            width: 100%;
+            background-color: var(--green-50);
+            transition: all 0.2s ease-in;
+            overflow-y: hidden;
+            top: 66px;
+            left: 0px;
+        }
+
+        .nav-links > a {
+            display: inline-block;
+            padding: 13px 10px 13px 10px;
+            text-decoration: none;
+            color: var(--grey-900);
+            width: 100%;
+        }
+
         #divHeader {
             display: flex;
             align-items: center;
@@ -34,8 +120,7 @@
         #divOwnStores {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            width: 80%;
+            align-items: start;
             margin: auto;
         }
 
@@ -46,7 +131,21 @@
 <body>
 
     <div id="divHeader">
-        <a href="profile.html"><img width="54" height="54" src="images/howqpon.ico" alt="howqpon"></a>
+
+        <input type="checkbox" id="nav-check" style="display: none">
+        <div class="nav-btn" style="display: flex;">
+            <label for="nav-check">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+        </div>
+        <div class="nav-links">
+            <a href="profile.html">店家管理</a>
+            <a href="https://codepen.io/jo_Geek/">使用說明</a>
+        </div>
+
+        <img width="54" height="54" src="images/howqpon.ico" alt="howqpon"></a>
         <button class="btn btn-block" type="submit" onclick="window.location.href='logout'">登出</button>
     </div>
 
@@ -90,23 +189,25 @@
 
         const div = document.getElementById('divOwnStores');
         for (let i = 0; i < sourceData.roles.length; i++){
-            const store = sourceStoreMap[sourceData.roles[i].storeId]
-
+            const store = sourceStoreMap[sourceData.roles[i].storeId];
             const div_store = document.createElement("div");
+            div_store.classList.add('divStore');
             div_store.style.display = "flex";
-            div_store.style.flexDirection = "row-reverse";
-            // div_store.style.justifyContent = "space-between";
-            // div_store.style.width = "100%";
+            div_store.style.justifyContent= "space-between";
+            div_store.style.width = "100%";
+            div_store.style.paddingBottom = "5px";
 
             const btn_store = document.createElement("button");
             btn_store.classList = 'btn';
             btn_store.onclick = () => window.location = `store?storeId=${store.storeId}.html`;
             btn_store.innerHTML = store.storeName;
             btn_store.innerHTML += '的';
+
             if(sourceData.roles[i].roleId == '0'){
                 btn_store.innerHTML += '好客萌小編';
             }
             if(sourceData.roles[i].roleId == '1'){
+                div_store.style.flexDirection = "row-reverse";
                 btn_store.innerHTML += '店長';
                 const btn_link = document.createElement("button");
                 btn_link.classList = 'btn btn-secondary';
@@ -119,9 +220,7 @@
             }
             
             div_store.appendChild(btn_store);
-
             div.appendChild(div_store);
-
         }
     }
 

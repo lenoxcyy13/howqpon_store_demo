@@ -14,6 +14,9 @@ let sourceStore = "";
 let storeName = "";
 let storeMap = {};
 
+let themeColor = "";
+let headContent = "";
+
 async function refresh() {
     divLoading.innerHTML = "正在載入頁面資料...";
 
@@ -93,12 +96,29 @@ function showStore(storeId) {
 
         results.forEach(result => {
             if (result.storeOrder.isStoreConfirm) {
+                if (result.order.sourceType == 1) {
+                    themeColor = 'var(--grey-900)';
+                    headContent = '店家轉單';
+                }
+                else {
+                    themeColor = 'var(--green-500)';
+                    headContent = '訂單編號';
+                }
                 resultIsConfirm = showEachOrder(isFirstOrder, tmpIsConfirm, result, totdayStoreTotalAmount);
                 isFirstOrder = resultIsConfirm.isFirstOrder;
                 tmpIsConfirm = resultIsConfirm.tmp;
                 totdayStoreTotalAmount += parseInt(tmpIsConfirm.totdayStoreTotalAmount);
             }
             else {
+                if (result.order.sourceType == 1) {
+                    themeColor = 'var(--grey-900)';
+                    headContent = '店家轉單';
+                }
+                else {
+                    themeColor = 'var(--red-500)';
+                headContent = '全新訂單';
+                }
+
                 resultNotConfirm = showEachOrder(isFirstOrder, tmpNotConfirm, result, totdayStoreTotalAmount);
                 isFirstOrder = resultNotConfirm.isFirstOrder;
                 tmpNotConfirm = resultNotConfirm.tmp;
@@ -119,8 +139,6 @@ function showEachOrder(isFirstOrder, tmp, result, totdayStoreTotalAmount) {
     let tmpMeal = '';
     let cTotalQty = '';
     let meals = storeOrder.meals;
-    let themeColor = 'var(--red-500)';
-    let headContent = '全新訂單';
 
     let totalAmount = storeOrder.totalAmount;
     let totalQty = storeOrder.totalQty;
@@ -159,7 +177,7 @@ function showEachOrder(isFirstOrder, tmp, result, totdayStoreTotalAmount) {
         let mealColor = '';
         if ((storeOrder.isCheckOrder ?? false) && (meal.isMarkUpdate ?? false)) {
             mealColor = 'blue';
-            themeColor = '#0d6efd';
+            themeColor = mealColor;
             headContent = '原單更新';
             cTotalQty = `改為${totalQty}份`;
         }
@@ -208,26 +226,28 @@ function showEachOrder(isFirstOrder, tmp, result, totdayStoreTotalAmount) {
             <tr><td colspan="7" style="text-align:center; color:red; font-weight: 600">餐點請務必先裝入塑膠袋，再裝入保溫袋</td></tr></table>`;
 
     tmp += (storeOrder.isStoreConfirm ?? false) ?
-    `<button class="btn btn-secondary btn-bold" onclick="updateStoreOrderConfirm('${order.orderId}', '${storeId}', false); openTab('btn_not', 'divNotConfirm', 'confirm')" style="margin: 10px">取消確認</button></div>` :
-    `<button class="btn btn-failed btn-bold" onclick="updateStoreOrderConfirm('${order.orderId}', '${storeId}', true); openTab('btn_confirm', 'divConfirm', 'confirm')" style="margin: 10px">
+    `<div style="margin: 10px">
+        <button class="btn btn-secondary btn-bold" onclick="updateStoreOrderConfirm('${order.orderId}', '${storeId}', false)">取消確認</button></div></div>` :
+    `<div style="margin: 10px">
+        <button class="btn btn-failed btn-bold" onclick="updateStoreOrderConfirm('${order.orderId}', '${storeId}', true)">
         <div style="display: flex;">
             <h3 style="margin-bottom: 0px">${order.orderNo}</h3>
             <h3 style="margin-left: 30px">${storeOrder.expectTime}出餐</h3>
         </div>
-        <h3 style="margin-bottom: 0px">共${totalQty}份&nbsp; 點我確認</h3></button></div>`;
+        <h3 style="margin-bottom: 0px">共${totalQty}份&nbsp; 點我確認</h3></button></div></div>`;
 ``
     return {'isFirstOrder': isFirstOrder, 'tmp': tmp, 'totdayStoreTotalAmount': totdayStoreTotalAmount};
 }
 
 function addOrdersToDiv(sourceStore, tmp, div, totdayStoreTotalAmount) {
     let contentHTML =
-        `<a href="javascript:void(0)" onclick="tableContentCapture()">下載成圖檔</a>`;
+        `<div class="dwld"><button class='btn btn-secondary btn-minimal' onclick="clickColl(this)">►</button>`;
 
     let info = sourceStore.uiSettings?.pasrseOrder2StoreInfo;
     if(info != null){
         contentHTML += `<div style="color:red;font-size:20px; border: 1px solid red;"><font style="font-weight:bold;">叫餐提醒說明：</font><br>${info}</div>`;
     }
-    contentHTML += "<br>";
+    contentHTML += `<a href="javascript:void(0)" onclick="tableContentCapture()">下載成圖檔</a></div>`;
     contentHTML += `<div id='tableContent'>${tmp}</div>`;
 
     div.innerHTML = contentHTML;
@@ -275,10 +295,10 @@ function createRow(r1, r2, r3, r4, mealNameColor) {
     }
 
     return `<tr>
-        <td class="td_no" onclick="onClickTd(this)">${r1}</td>
-        <td class="td_meal" onclick="onClickTd(this)" style="display:flex; color:${mealNameColor}">${r2}</td>
-        <td class="td_qty" onclick="onClickTd(this)">${r3}</td>
-        <td class="td_amount" onclick="onClickTd(this)">${r4}</td>
+        <td class="td_no">${r1}</td>
+        <td class="td_meal" style="display:flex; color:${mealNameColor}">${r2}</td>
+        <td class="td_qty">${r3}</td>
+        <td class="td_amount">${r4}</td>
         </tr>`;
 }
 
@@ -318,18 +338,20 @@ async function updateStoreOrderConfirm(orderId, storeId, isStoreConfirm) {
             }
         });
         showStore(storeId);
+        myInterval = setInterval(myCallback, 50);
     }
 
     hideElement(divLoading);
     showElement(divMain);
 }
 
-function tableContentCapture() {
-    let hides = document.getElementsByClassName("btn-bold");
-    hides += document.getElementsByTagName("a");
-    console.log(hides);
-    console.log(hide2);
-
+function tableContentCapture() { 
+    
+    let hide1 = document.getElementsByClassName("btn-bold");
+    let hide2 = document.getElementsByClassName('dwld');
+    let hides = [].concat(Array.from(hide1))
+                  .concat(Array.from(hide2));
+    
     for (let hide of hides) {
         hideElement(hide);
     }
@@ -346,6 +368,7 @@ function tableContentCapture() {
         for (let hide of hides) {
             showElement(hide);
         }
+        // showElement(hide2);
     });
 }
 
@@ -367,6 +390,23 @@ function caculateUpdateConunt(storeId) {
         "isConfirm": isConfirm
     };
     
+}
+
+function clickColl(tri) {
+    tri.style.transform = 'rotate(90deg)';
+    // if (tri.style.transform) {
+    //     tri.style.removeProperty('transform');
+    // }
+    // else {
+    //     tri.style.transform = 'rotate(90deg)';
+    // }
+    
+    let collapse = document.getElementsByClassName('collapse-body');
+    for (let i = 0; i < collapse.length; i++) {
+        collId = collapse[i].id;
+        openColl(collId);
+    }
+    tri.style.removeProperty('transform');
 }
 
 refresh();
