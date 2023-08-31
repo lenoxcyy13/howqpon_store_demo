@@ -29,11 +29,11 @@ async function refresh() {
     btn_not.innerHTML = "待確認"
     btn_confirm.innerHTML = "已確認";
 
-    let result = await callGetApi("http://127.0.0.1:8001/api/getOrders?filterDate=" + inputDate.value.replaceAll("-", ""));
+    let result = await callGetApi(HOST + "/api/getOrders?filterDate=" + inputDate.value.replaceAll("-", ""));
     orders = JSON.parse(result.response);
     orders = orders.filter(order => order.totalAmount != 0);
 
-    result = await callGetApi("http://127.0.0.1:8001/api/getStores");
+    result = await callGetApi(HOST + "/api/getStores");
     let stores = JSON.parse(result.response);
     sourceStoreMap = stores.reduce(function(map, obj) {
         map[obj.storeId] = obj;
@@ -96,28 +96,17 @@ function showStore(storeId) {
 
         results.forEach(result => {
             if (result.storeOrder.isStoreConfirm) {
-                if (result.order.sourceType == 1) {
-                    themeColor = 'var(--grey-900)';
-                    headContent = '店家轉單';
-                }
-                else {
-                    themeColor = 'var(--green-500)';
-                    headContent = '訂單編號';
-                }
+                themeColor = 'var(--green-500)';
+                headContent = '訂單編號';
+
                 resultIsConfirm = showEachOrder(isFirstOrder, tmpIsConfirm, result, totdayStoreTotalAmount);
                 isFirstOrder = resultIsConfirm.isFirstOrder;
                 tmpIsConfirm = resultIsConfirm.tmp;
                 totdayStoreTotalAmount += parseInt(tmpIsConfirm.totdayStoreTotalAmount);
             }
             else {
-                if (result.order.sourceType == 1) {
-                    themeColor = 'var(--grey-900)';
-                    headContent = '店家轉單';
-                }
-                else {
-                    themeColor = 'var(--red-500)';
+                themeColor = 'var(--red-500)';
                 headContent = '全新訂單';
-                }
 
                 resultNotConfirm = showEachOrder(isFirstOrder, tmpNotConfirm, result, totdayStoreTotalAmount);
                 isFirstOrder = resultNotConfirm.isFirstOrder;
@@ -142,6 +131,14 @@ function showEachOrder(isFirstOrder, tmp, result, totdayStoreTotalAmount) {
 
     let totalAmount = storeOrder.totalAmount;
     let totalQty = storeOrder.totalQty;
+
+    if (result.order.sourceType == 1) {
+        themeColor = 'var(--grey-900)';
+        headContent = '店家轉單';
+    }
+    if (result.order.project) {
+        cTotalQty += ' ＊';
+    }
 
     let showMeals = [];
     meals.forEach((meal, mealIndex) => {
@@ -189,7 +186,7 @@ function showEachOrder(isFirstOrder, tmp, result, totdayStoreTotalAmount) {
     });
 
     tmp += `<button class="btn btn-secondary collapse-head" style="color: ${themeColor} !important;" onclick="openColl('${order.orderNo}')">
-                <span>● ${headContent}：${order.orderNo}</span>
+                <span>● ${headContent}：${order.orderNo}${order.storeOrderNo ? '/'+order.storeOrderNo : ''}</span>
                 <span>${cTotalQty}</span>
                 <span>出餐：${storeOrder.expectTime}</span>
             </button>`;
@@ -225,17 +222,19 @@ function showEachOrder(isFirstOrder, tmp, result, totdayStoreTotalAmount) {
     tmp += `<tr><td colspan="7" style="text-align:center; color:red; font-weight: 600">收據發票請開【原價金額】不要扣除服務費</td></tr>
             <tr><td colspan="7" style="text-align:center; color:red; font-weight: 600">餐點請務必先裝入塑膠袋，再裝入保溫袋</td></tr></table>`;
 
-    tmp += (storeOrder.isStoreConfirm ?? false) ?
-    `<div style="margin: 10px">
-        <button class="btn btn-secondary btn-bold" onclick="updateStoreOrderConfirm('${order.orderId}', '${storeId}', false)">取消確認</button></div></div>` :
-    `<div style="margin: 10px">
-        <button class="btn btn-failed btn-bold" onclick="updateStoreOrderConfirm('${order.orderId}', '${storeId}', true)">
-        <div style="display: flex;">
-            <h3 style="margin-bottom: 0px">${order.orderNo}</h3>
-            <h3 style="margin-left: 30px">${storeOrder.expectTime}出餐</h3>
-        </div>
-        <h3 style="margin-bottom: 0px">共${totalQty}份&nbsp; 點我確認</h3></button></div></div>`;
-``
+    // tmp += (storeOrder.isStoreConfirm ?? false) ?
+    // `<div style="margin: 10px">
+    //     <button class="btn btn-secondary btn-bold" onclick="updateStoreOrderConfirm('${order.orderId}', '${storeId}', false)">取消確認</button></div></div>` :
+    // `<div style="margin: 10px">
+    //     <button class="btn btn-failed btn-bold" onclick="updateStoreOrderConfirm('${order.orderId}', '${storeId}', true)">
+    //     <div style="display: flex;">
+    //         <h3 style="margin-bottom: 0px">${order.orderNo}</h3>
+    //         <h3 style="margin-left: 30px">${storeOrder.expectTime}出餐</h3>
+    //     </div>
+    //     <h3 style="margin-bottom: 0px">共${totalQty}份&nbsp; 點我確認</h3></button></div></div>`;
+    
+    tmp += `</div>`;
+
     return {'isFirstOrder': isFirstOrder, 'tmp': tmp, 'totdayStoreTotalAmount': totdayStoreTotalAmount};
 }
 
@@ -321,7 +320,7 @@ async function updateStoreOrderConfirm(orderId, storeId, isStoreConfirm) {
     showElement(divLoading);
     hideElement(divMain);
 
-    let result = await callPostApi("http://127.0.0.1:8001/api/updateStoreOrderConfirm", {
+    let result = await callPostApi(HOST + "/api/updateStoreOrderConfirm", {
         "datas": [{
             "orderId": orderId,
             "isAllStoreConfirm": false,

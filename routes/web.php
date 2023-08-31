@@ -6,6 +6,8 @@ use App\Http\Controllers\LineController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberControllerV2;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\SimpleController;
 
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -40,6 +42,7 @@ Route::get('/logout', function(Request $request) {
     return redirect("login");
 });
 
+Route::get('/', function () {return redirect("login");});
 Route::get('/login', function(Request $request) {
     $token = $request -> token;
     return view('login', ['token' => $token]);
@@ -87,3 +90,15 @@ Route::get('/store', function (Request $request) {
     }
     
 });
+
+Route::get('/manual.html', function(Request $request) {
+    return view("manual");
+});
+
+
+
+
+
+Route::get('/api/getStores', [SimpleController::class, 'getStores']);
+Route::get('/api/getOrders', [OrderController::class, 'getOrders']);
+Route::post('/api/updateStoreOrderConfirm', [OrderController::class, 'updateStoreOrderConfirm']);

@@ -210,7 +210,7 @@
         </div>
         <div class="nav-links">
             <a href="profile.html">店家管理</a>
-            <a href="profile.html">使用說明</a>
+            <a href="manual.html">使用說明</a>
         </div>
 
         <img width="54" height="54" src="images/howqpon.ico" alt="howqpon"></a>
@@ -287,8 +287,8 @@
 
     function openColl(idName) {
         const content = document.getElementById(idName);
-        if (content.style.maxHeight != "0px") {
-            content.style.maxHeight = "0px";
+        if (content.style.maxHeight) {
+            content.style.maxHeight = null;
         } 
         else {
             content.style.maxHeight = content.scrollHeight + "px";

@@ -13,9 +13,8 @@
     <link href="css/home/custom.css" rel="stylesheet">
     <link href="css/mystyle.css" rel="stylesheet">
     <link href="css/bootstrap.css" rel="stylesheet">
-    <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
 
-    <title>身份</title>
+    <title>店家管理</title>
 
     <style>
 
@@ -142,7 +141,7 @@
         </div>
         <div class="nav-links">
             <a href="profile.html">店家管理</a>
-            <a href="https://codepen.io/jo_Geek/">使用說明</a>
+            <a href="manual.html">使用說明</a>
         </div>
 
         <img width="54" height="54" src="images/howqpon.ico" alt="howqpon"></a>
@@ -179,7 +178,7 @@
     fontName.innerHTML = sourceData.name;
 
     async function getStoreInfo() {
-        result = await callGetApi("http://127.0.0.1:8001/api/getStores");
+        result = await callGetApi(HOST + "/api/getStores");
         let stores = JSON.parse(result.response);
         sourceStoreMap = stores.reduce(function(map, obj) {
             map[obj.storeId] = obj;

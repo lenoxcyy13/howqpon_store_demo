@@ -215,14 +215,19 @@ class LineController extends Controller{
                                     $isLoginSuccess = true;
                                 }
                                 else {
-                                    // dd('no data in role table');
-                                    $result = $userController->createRole(new Request([
-                                        "userId" => $userId,
-                                        "storeId" => $storeId,
-                                        "roleName" => $role,
-                                    ]));
-                                    $ownStoreNum += 1;
-                                    $isLoginSuccess = true;
+                                    if ($userController->checkRole($userId, $storeId) != null) {
+                                        $isLoginSuccess = true;
+                                    }
+                                    else {
+                                        // dd('no data in role table');
+                                        $result = $userController->createRole(new Request([
+                                            "userId" => $userId,
+                                            "storeId" => $storeId,
+                                            "roleName" => $role,
+                                        ]));
+                                        $ownStoreNum += 1;
+                                        $isLoginSuccess = true;
+                                    }
                                 }
                                 // dd($isLoginSuccess);
                             }
