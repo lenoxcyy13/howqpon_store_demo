@@ -16,12 +16,6 @@ class OrderController extends Controller{
         //     return [];
         // }
 
-        $tableExists = DB::select("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_NAME = 'orders_view'");
-
-        if (empty($tableExists)) {
-            $stores = DB::statement('CREATE VIEW `howqpon_store`.`orders_view` AS SELECT * FROM `howqpon`.`orders`');
-        }
-
         $orders = DB::table('orders_view');
         $filterIds = $request->filterIds;
         if($filterIds != null){
@@ -119,34 +113,21 @@ class OrderController extends Controller{
             $successCount = 0;
     
             foreach($datas as $data){
+
                 $orderId = $data['orderId'];
                 $isStoreConfirm = $data['isStoreConfirm'];
-                $storeIds = $data['storeIds'];
-                $isAllStoreConfirm = $data['isAllStoreConfirm'];
-    
-                $orders = DB::table('orders_view')->where('orderId', (String) $orderId);
-                if($orders->count() == 1){
-                    $order = $orders->first();
+                // $storeIds = $data['storeIds'];
+                // $isAllStoreConfirm = $data['isAllStoreConfirm'];
+                $currentTime = date('Y-m-d H:i:s');
+
+                $order = DB::table('order_confirm')->where('orderId', (String) $orderId);
+                if(isset($isStoreConfirm)){
                     
-                    $storeOrders = json_decode($order->storeOrders);
-    
-                    foreach ($storeOrders as $i => $storeOrder) {
-                        $isUpdate = false;
-                        if($isAllStoreConfirm){
-                            $isUpdate = true;
-                        } else {
-                            $isUpdate = array_search($storeOrder->storeId, $storeIds) !== false;
-                        }
-    
-                        if($isUpdate){
-                            $storeOrders[$i]->isStoreConfirm = $isStoreConfirm;
-                        }
-                    }
-    
                     $tmps = [
-                        'storeOrders' => json_encode($storeOrders)
+                        'confirmStatus' => $isStoreConfirm,
+                        'confirmTime' => $currentTime
                     ];
-                    $result = $orders->update($tmps);
+                    $result = $order->update($tmps);
                     if($result == 1){
                         $successCount += 1;
                     }
@@ -161,5 +142,15 @@ class OrderController extends Controller{
         }  
     
         return ["status" => "UNKNOW_ERROR"]; 
+    }
+
+    public function checkStoreOrderConfirm(Request $request) {
+        $result = null;
+        $filterDate = $request->filterDate;
+        $orders = DB::table('order_confirm')->where('orderId', 'like', $filterDate.'%')->get();
+        if(!$orders->isEmpty()){
+            $result = $orders;
+        }
+        return ['confirmStatus' => $result];
     }
 }

@@ -14,8 +14,8 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class LineController extends Controller{
 
-    var $login_client_id = "2000356104";
-    var $login_client_secret = "49739afa43541cf5705f69c756a5633f";
+    var $login_client_id = "2000644004";
+    var $login_client_secret = "578bc1d9e2f17567a0136c3a969b6b70";
 
     // var $notify_client_id = "F1UkDbjTPHDOJok5qv4SN8";
     // var $notify_client_secret = "9bHDkkkPutfotqGe0RGRtPwyfjAC4EeHHijjVZffQyr";

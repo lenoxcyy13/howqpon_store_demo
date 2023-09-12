@@ -74,10 +74,9 @@ class UserController extends Controller {
 
         $result = null;
         $check = DB::table("role")->where("userId", $userId)->exists();
-
+        $storeRoles = [];
         if($check){
             $result = DB::table("role")->where("userId", $userId)->get();
-            $storeRoles = [];
             $i = 0;
             foreach ($result as $item) {
                 $storeRoles[$i] = [

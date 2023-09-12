@@ -25,6 +25,9 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 Route::get('/profile.html', function (Request $request) {
     $userId = $request->session()->get('userId');
     $user = (new UserController())->getUserProfileByUserId($userId);
+    if($user == null) {
+        return redirect('login');
+    }
 
     $roles = (new UserController())->checkRoles($userId);
     $data = [
@@ -102,3 +105,4 @@ Route::get('/manual.html', function(Request $request) {
 Route::get('/api/getStores', [SimpleController::class, 'getStores']);
 Route::get('/api/getOrders', [OrderController::class, 'getOrders']);
 Route::post('/api/updateStoreOrderConfirm', [OrderController::class, 'updateStoreOrderConfirm']);
+Route::post('/api/checkStoreOrderConfirm', [OrderController::class, 'checkStoreOrderConfirm']);

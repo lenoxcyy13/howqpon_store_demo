@@ -16,6 +16,7 @@ let storeMap = {};
 
 let themeColor = "";
 let headContent = "";
+let isStoreConfirm = "";
 
 async function refresh() {
     divLoading.innerHTML = "正在載入頁面資料...";
@@ -34,11 +35,15 @@ async function refresh() {
     orders = orders.filter(order => order.totalAmount != 0);
 
     result = await callGetApi(HOST + "/api/getStores");
-    let stores = JSON.parse(result.response);
+    stores = JSON.parse(result.response);
     sourceStoreMap = stores.reduce(function(map, obj) {
         map[obj.storeId] = obj;
         return map;
     }, {});
+
+    result = await callPostApi(HOST + "/api/checkStoreOrderConfirm?filterDate=" + inputDate.value.replaceAll("-", ""));
+    result = JSON.parse(result.response);
+    isStoreConfirmStatus = result.confirmStatus
 
     if (orders.length > 0) {
         showStore(storeId);
@@ -66,6 +71,7 @@ function showStore(storeId) {
 
             storeMap[storeOrder.storeId].push({
                 "order": order,
+                "isStoreConfirm": isStoreConfirmStatus.find(i => i.orderId === order.orderId).confirmStatus,
                 "storeOrder": storeOrder
             });
         });
@@ -95,7 +101,8 @@ function showStore(storeId) {
         let tmpNotConfirm = "";
 
         results.forEach(result => {
-            if (result.storeOrder.isStoreConfirm) {
+
+            if (result.isStoreConfirm) {
                 themeColor = 'var(--green-500)';
                 headContent = '訂單編號';
 
@@ -115,8 +122,8 @@ function showStore(storeId) {
             }
         });
 
-        addOrdersToDiv(sourceStore, tmpIsConfirm, divConfirm, totdayStoreTotalAmount);
-        addOrdersToDiv(sourceStore, tmpNotConfirm, divNotConfirm, totdayStoreTotalAmount);
+        addOrdersToDiv(tmpIsConfirm, divConfirm, totdayStoreTotalAmount);
+        addOrdersToDiv(tmpNotConfirm, divNotConfirm, totdayStoreTotalAmount);
     }
 }
 
@@ -132,12 +139,11 @@ function showEachOrder(isFirstOrder, tmp, result, totdayStoreTotalAmount) {
     let totalAmount = storeOrder.totalAmount;
     let totalQty = storeOrder.totalQty;
 
-    if (result.order.sourceType == 1) {
+    // console.log(result.order);
+
+    if (result.order.sourceType == 2) {
         themeColor = 'var(--grey-900)';
         headContent = '店家轉單';
-    }
-    if (result.order.project) {
-        cTotalQty += ' ＊';
     }
 
     let showMeals = [];
@@ -186,11 +192,11 @@ function showEachOrder(isFirstOrder, tmp, result, totdayStoreTotalAmount) {
     });
 
     tmp += `<button class="btn btn-secondary collapse-head" style="color: ${themeColor} !important;" onclick="openColl('${order.orderNo}')">
-                <span>● ${headContent}：${order.orderNo}${order.storeOrderNo ? '/'+order.storeOrderNo : ''}</span>
+                <span>● ${headContent}：${order.orderNo}${order.storeOrderNo ? '/'+order.storeOrderNo : ''}${order.project ? '＊' : ''}</span>
                 <span>${cTotalQty}</span>
                 <span>出餐：${storeOrder.expectTime}</span>
             </button>`;
-    tmp += `<div id="${order.orderNo}" class="collapse-body ${result.storeOrder.isStoreConfirm ? 'isClose' : 'isOpen'}">
+    tmp += `<div id="${order.orderNo}" class="collapse-body ${result.isStoreConfirm ? 'isClose' : 'isOpen'}">
                 <table id="${order.orderNo}_table" style="border-color: ${themeColor}; border-width: 2px">`;
     
     tmp += tmpMeal;
@@ -222,23 +228,24 @@ function showEachOrder(isFirstOrder, tmp, result, totdayStoreTotalAmount) {
     tmp += `<tr><td colspan="7" style="text-align:center; color:red; font-weight: 600">收據發票請開【原價金額】不要扣除服務費</td></tr>
             <tr><td colspan="7" style="text-align:center; color:red; font-weight: 600">餐點請務必先裝入塑膠袋，再裝入保溫袋</td></tr></table>`;
 
-    // tmp += (storeOrder.isStoreConfirm ?? false) ?
-    // `<div style="margin: 10px">
-    //     <button class="btn btn-secondary btn-bold" onclick="updateStoreOrderConfirm('${order.orderId}', '${storeId}', false)">取消確認</button></div></div>` :
-    // `<div style="margin: 10px">
-    //     <button class="btn btn-failed btn-bold" onclick="updateStoreOrderConfirm('${order.orderId}', '${storeId}', true)">
-    //     <div style="display: flex;">
-    //         <h3 style="margin-bottom: 0px">${order.orderNo}</h3>
-    //         <h3 style="margin-left: 30px">${storeOrder.expectTime}出餐</h3>
-    //     </div>
-    //     <h3 style="margin-bottom: 0px">共${totalQty}份&nbsp; 點我確認</h3></button></div></div>`;
+    tmp += (result.isStoreConfirm ?? false) ?
+    `<div style="margin: 10px">
+        <button class="btn btn-secondary btn-bold" onclick="updateStoreOrderConfirm('${order.orderId}', '${storeId}', false)">取消確認</button></div></div>` :
+    `<div style="margin: 10px">
+        <button class="btn btn-failed btn-bold" onclick="updateStoreOrderConfirm('${order.orderId}', '${storeId}', true)">
+        <div style="display: flex;">
+            <h3 style="margin-bottom: 0px">${order.orderNo}</h3>
+            <h3 style="margin-left: 30px">${storeOrder.expectTime}出餐</h3>
+        </div>
+        <h3 style="margin-bottom: 0px">共${totalQty}份&nbsp; 點我確認</h3></button></div></div>`;
     
-    tmp += `</div>`;
+    // tmp += `</div>`;
 
     return {'isFirstOrder': isFirstOrder, 'tmp': tmp, 'totdayStoreTotalAmount': totdayStoreTotalAmount};
 }
 
-function addOrdersToDiv(sourceStore, tmp, div, totdayStoreTotalAmount) {
+function addOrdersToDiv(tmp, div, totdayStoreTotalAmount) {
+
     let contentHTML =
         `<div class="dwld"><button class='btn btn-secondary btn-minimal' onclick="clickColl(this)">►</button>`;
 
@@ -255,28 +262,6 @@ function addOrdersToDiv(sourceStore, tmp, div, totdayStoreTotalAmount) {
 function updateTotal(storeId, storeName) {
 
     let caculateResult = caculateUpdateConunt(storeId);
-
-    let fontColor = "red";
-    if (caculateResult.isAllCheck) {
-        fontColor = "green";
-    }
-    let checkColor = "";
-    if (!caculateResult.isAllCheck) {
-        checkColor = "red";
-    }
-
-    let confirmColor = "";
-    if (!caculateResult.isAllConfirm) {
-        confirmColor = "red";
-    }
-    tmp2 =
-        `<table>
-        <tr><td>店名</td><td>總數</td><td>已叫餐</td><td>店家已確認</td></tr>
-        <tr><td>${storeName}</td>
-        <td>${caculateResult.allCount}</td>
-        <td style="background-color:${checkColor}">${caculateResult.isCheckCount}</td>
-        <td style="background-color:${confirmColor}">${caculateResult.isConfirmCount}</td>
-        </tr></table>`;
 
     btn_not.innerHTML = "待確認 "+caculateResult.notConfirmCount;
     btn_confirm.innerHTML = "已確認 "+caculateResult.isConfirmCount;
@@ -310,11 +295,12 @@ async function updateStoreOrderConfirm(orderId, storeId, isStoreConfirm) {
     });
 
     let storeOrders = JSON.parse(JSON.stringify(order.storeOrders));
-    storeOrders.forEach(storeOrder => {
-        if (storeOrder.storeId == storeId) {
-            storeOrder.isStoreConfirm = isStoreConfirm;
+
+    isStoreConfirmStatus.forEach(i => {
+        if (i.orderId == orderId) {
+            i.confirmStatus = isStoreConfirm;
         }
-    });
+    })
 
     divLoading.innerHTML = "正在更新資料...";
     showElement(divLoading);
@@ -342,6 +328,17 @@ async function updateStoreOrderConfirm(orderId, storeId, isStoreConfirm) {
 
     hideElement(divLoading);
     showElement(divMain);
+}
+
+async function checkStoreOrderConfirm(orderId) {
+    let result = await callPostApi(HOST + "/api/checkStoreOrderConfirm", {
+        "datas": [{
+            "orderId": orderId,
+        }],
+    });
+
+    result = JSON.parse(result.response);
+    return result.confirmStatus
 }
 
 function tableContentCapture() { 
@@ -374,19 +371,12 @@ function tableContentCapture() {
 function caculateUpdateConunt(storeId) {
     let results = storeMap[storeId];
     let allCount = results.length;
-    let isCheck = results.filter(result => (result.storeOrder.isCheckOrder ?? false) && (result.storeOrder.updateCheckOrderText == null));
-    let isCheckCount = (isCheck).length;
-    let isConfirm = results.filter(result => (result.storeOrder.isStoreConfirm ?? false));
+    let isConfirm = results.filter(result => (result.isStoreConfirm ?? false));
     let isConfirmCount = (isConfirm).length;
     return {
         "allCount": allCount,
-        "isCheckCount": isCheckCount,
         "isConfirmCount": isConfirmCount,
         "notConfirmCount": allCount-isConfirmCount,
-        "isAllCheck": allCount == isCheckCount,
-        "isAllConfirm": allCount == isConfirmCount,
-        "isCheck": isCheck,
-        "isConfirm": isConfirm
     };
     
 }

@@ -225,7 +225,7 @@
                 日期：<input id="inputDate" type="date" onchange="refresh()">
             </div>
             <div>
-                <div id="divStores" class="floatLeft" style="display: none"></div>
+                <div id="divStores" class="floatLeft"></div>
                 <div class="floatLeft">
                     <div id="divSort" style="display: ">
                         顯示服務費<input id="inputCbkShowFeeAmount" type="checkbox" oninput="showFee(storeId)" checked>
