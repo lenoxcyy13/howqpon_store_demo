@@ -49,6 +49,7 @@ async function refresh() {
         showStore(storeId);
     } else {
         divStores.innerHTML = inputDate.value + " 尚無訂單";
+        divTotalAmount.innerHTML = "";
     }
 
     sourceStore = sourceStoreMap[storeId];
@@ -60,6 +61,7 @@ async function refresh() {
 }
 
 function showStore(storeId) {
+    
     selectStoreId = storeId;
     storeMap = {};
     orders.forEach(order => {
@@ -109,7 +111,7 @@ function showStore(storeId) {
                 resultIsConfirm = showEachOrder(isFirstOrder, tmpIsConfirm, result, totdayStoreTotalAmount);
                 isFirstOrder = resultIsConfirm.isFirstOrder;
                 tmpIsConfirm = resultIsConfirm.tmp;
-                totdayStoreTotalAmount += parseInt(tmpIsConfirm.totdayStoreTotalAmount);
+                totdayStoreTotalAmount += parseInt(resultIsConfirm.totdayStoreTotalAmount);
             }
             else {
                 themeColor = 'var(--red-500)';
@@ -246,17 +248,23 @@ function showEachOrder(isFirstOrder, tmp, result, totdayStoreTotalAmount) {
 
 function addOrdersToDiv(tmp, div, totdayStoreTotalAmount) {
 
+    divTotalAmount.innerHTML = "所有訂單總價："+totdayStoreTotalAmount;
     let contentHTML =
-        `<div class="dwld"><button class='btn btn-secondary btn-minimal' onclick="clickColl(this)">►</button>`;
+        `<div style="display: flex;justify-content: space-between;">
+            <div class="dwld"><button class='btn btn-secondary btn-minimal' onclick="clickColl(this)">►</button>`;
 
     let info = sourceStore.uiSettings?.pasrseOrder2StoreInfo;
     if(info != null){
         contentHTML += `<div style="color:red;font-size:20px; border: 1px solid red;"><font style="font-weight:bold;">叫餐提醒說明：</font><br>${info}</div>`;
     }
     contentHTML += `<a href="javascript:void(0)" onclick="tableContentCapture()">下載成圖檔</a></div>`;
-    contentHTML += `<div id='tableContent'>${tmp}</div>`;
+    if(div.id == 'divConfirm') {
+        contentHTML += `<select id="sortSelect" onchange="sortVal()"><option value=0 selected>出餐順序</option><option value=1>單號</option></select>`;
+    }
+    contentHTML += `</div><div class='tableContent'>${tmp}</div>`;
 
     div.innerHTML = contentHTML;
+    sortOrders(0);
 }
 
 function updateTotal(storeId, storeName) {
@@ -397,5 +405,72 @@ function clickColl(tri) {
     }
     tri.style.removeProperty('transform');
 }
+
+function sortVal() {
+    s = document.getElementById("sortSelect").value;
+    sortOrders(s);
+}
+
+function sortOrders(s) {
+
+    const tab = document.getElementById('divConfirm');
+    const pairingElements = tab.querySelectorAll('.collapse-head');
+    const pairingData = [];
+
+    pairingElements.forEach((element) => {
+        const collapseId = element.getAttribute('onclick').match(/'([^']+)'/)[1];
+        const orderAndTime = extractOrderAndTime(collapseId);
+
+        if (orderAndTime) {
+            pairingData.push({ element, ...orderAndTime });
+        }
+    });
+
+    // Sort the pairing elements based on time
+    if(s == 0) {
+        pairingData.sort((a, b) => {
+            const timeA = a.time;
+            const timeB = b.time;
+            return timeA.localeCompare(timeB);
+        });
+    }
+    else if(s == 1) {
+        pairingData.sort((a, b) => {
+            const orderIdA = a.orderId;
+            const orderIdB = b.orderId;
+            return orderIdA.localeCompare(orderIdB);
+        });
+    }
+
+    // Get the parent div
+    const tableContent = tab.querySelector('.tableContent');
+
+    // Clear the parent div
+    tableContent.innerHTML = '';
+
+    // Append the sorted elements back to the parent div
+    pairingData.forEach((pairing) => {
+        tableContent.appendChild(pairing.element);
+        const associatedDiv = document.getElementById(pairing.orderId);
+        if (associatedDiv) {
+            tableContent.appendChild(associatedDiv);
+        }
+    });
+
+}
+
+function extractOrderAndTime(collapseId) {
+    const button = document.querySelector(`button[onclick="openColl('${collapseId}')"]`);
+    if (!button) return null;
+  
+    const time = button.querySelector('span:nth-child(3)').textContent
+  
+    if (collapseId && time) {
+      const orderId = collapseId;
+      return { orderId, time };
+    }
+  
+    return null;
+  }
 
 refresh();

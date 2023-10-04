@@ -222,7 +222,8 @@
         <div id="divMain" style="display: none;">
             <div id="divTitle">
                 <h4 id="pStoreName"></h4>
-                日期：<input id="inputDate" type="date" onchange="refresh()">
+                日期：<input id="inputDate" type="date" onchange="refresh()"><br>
+                <div id="divTotalAmount">所有訂單總價：0</div>
             </div>
             <div>
                 <div id="divStores" class="floatLeft"></div>
@@ -295,6 +296,11 @@
         }
     }
 
+    function showFee(storeId) {
+        showStore(storeId);
+        myInterval = setInterval(myCallback, 50);
+    }    
+    
     function myCallback() {
         const tabl = document.getElementsByClassName("collapse-body isOpen");
         if (tabl.length) {
@@ -305,12 +311,7 @@
         }
     }
 
-    function showFee(storeId) {
-        showStore(storeId);
-        myInterval = setInterval(myCallback, 50);
-    }
 
     let myInterval = setInterval(myCallback, 50);
 
 </script>
-
