@@ -17,6 +17,7 @@ let storeMap = {};
 let themeColor = "";
 let headContent = "";
 let isStoreConfirm = "";
+let originalData = [];
 
 async function refresh() {
     divLoading.innerHTML = "正在載入頁面資料...";
@@ -259,7 +260,11 @@ function addOrdersToDiv(tmp, div, totdayStoreTotalAmount) {
     }
     contentHTML += `<a href="javascript:void(0)" onclick="tableContentCapture()">下載成圖檔</a></div>`;
     if(div.id == 'divConfirm') {
-        contentHTML += `<select id="sortSelect" onchange="sortVal()"><option value=0 selected>出餐順序</option><option value=1>單號</option></select>`;
+        contentHTML += `<select id="sortSelect" onchange="sortVal()">
+                            <option value=0 selected>出餐順序</option>
+                            <option value=2>進單順序</option>
+                            <option value=1>單號</option>
+                        </select>`;
     }
     contentHTML += `</div><div class='tableContent'>${tmp}</div>`;
 
@@ -415,48 +420,49 @@ function sortOrders(s) {
 
     const tab = document.getElementById('divConfirm');
     const pairingElements = tab.querySelectorAll('.collapse-head');
-    const pairingData = [];
+    let pairingData = [];
 
-    pairingElements.forEach((element) => {
-        const collapseId = element.getAttribute('onclick').match(/'([^']+)'/)[1];
-        const orderAndTime = extractOrderAndTime(collapseId);
+    if (originalData.length == 0) {
+        pairingElements.forEach((element) => {
+            const collapseId = element.getAttribute('onclick').match(/'([^']+)'/)[1];
+            const collapsetb = document.getElementById(collapseId);
+            const orderAndTime = extractOrderAndTime(collapseId);
+    
+            if (orderAndTime) {
+                originalData.push({ element, collapsetb, ...orderAndTime });
+            }
+        });
+    }
 
-        if (orderAndTime) {
-            pairingData.push({ element, ...orderAndTime });
-        }
-    });
-
-    // Sort the pairing elements based on time
-    if(s == 0) {
-        pairingData.sort((a, b) => {
+    // Sort the pairing elements
+    if(s == 0) { // 時間
+        pairingData = originalData.toSorted((a, b) => {
             const timeA = a.time;
             const timeB = b.time;
             return timeA.localeCompare(timeB);
         });
     }
-    else if(s == 1) {
-        pairingData.sort((a, b) => {
+    else if(s == 1) { // 單號
+        pairingData = originalData.toSorted((a, b) => {
             const orderIdA = a.orderId;
             const orderIdB = b.orderId;
             return orderIdA.localeCompare(orderIdB);
         });
     }
+    else if(s == 2) { // 進單順序
+        pairingData = originalData;
+    }
 
-    // Get the parent div
     const tableContent = tab.querySelector('.tableContent');
-
-    // Clear the parent div
     tableContent.innerHTML = '';
-
-    // Append the sorted elements back to the parent div
     pairingData.forEach((pairing) => {
         tableContent.appendChild(pairing.element);
+        tableContent.appendChild(pairing.collapsetb);
         const associatedDiv = document.getElementById(pairing.orderId);
         if (associatedDiv) {
             tableContent.appendChild(associatedDiv);
         }
     });
-
 }
 
 function extractOrderAndTime(collapseId) {
@@ -471,6 +477,10 @@ function extractOrderAndTime(collapseId) {
     }
   
     return null;
-  }
+}
+
+function deepCopy(obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
 
 refresh();
